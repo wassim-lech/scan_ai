@@ -1,18 +1,29 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const express = require('express');
+const connectDB = require('./config/db');
+const cors = require('cors');
+const authRoutes = require('./routes/auth');
 
-const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  email:    { type: String, required: true, unique: true },
-  password: { type: String, required: true }
-});
+// Load environment variables
+require('dotenv').config();
 
-// Encrypt password before saving
-UserSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
+// Initialize app
+const app = express();
 
-module.exports = mongoose.model('User', UserSchema);
+// Connect to database
+connectDB();
+
+// Middleware
+app.use(express.json());
+app.use(cors());
+
+// Routes
+app.use('/api/auth', authRoutes);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// In your backend app.js
+app.use(cors({
+  origin: 'http://localhost:3000', // your React app URL
+  credentials: true
+}));

@@ -18,7 +18,9 @@ const LoginPage = () => {
             <h2 className="text-2xl font-bold text-center mb-6">Log in to E-med</h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+                
                 <div>
+                    
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
                     <input
                         id="email"
