@@ -1,9 +1,8 @@
 const express = require('express');
-const connectDB = require('./config/db');
 const cors = require('cors');
-const authRoutes = require('./routes/auth');
 const connectDB = require('./db');
-connectDB();
+const authRoutes = require('./routes/auth');
+
 // Load environment variables
 require('dotenv').config();
 
@@ -15,16 +14,13 @@ connectDB();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // your React app URL
+  credentials: true
+}));
 
 // Routes
 app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-// In your backend app.js
-app.use(cors({
-  origin: 'http://localhost:3000', // your React app URL
-  credentials: true
-}));
