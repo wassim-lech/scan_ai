@@ -15,6 +15,8 @@ const Header = () => {
                         <Link to="/">Home</Link>
                         <Link to="/scan">Scan</Link>
                         <Link to="/about">About</Link>
+                        <Link to="/appointment">Book Appointment</Link>     
+
                         <Link to="/help">Help & Support</Link>
                     </div>
                 </div>
@@ -29,6 +31,7 @@ const Header = () => {
                         <>
                             <Link to="/login" className="btn btn-outline">Log in</Link>
                             <Link to="/signup" className="btn btn-primary">Sign up</Link>
+
                         </>
                     )}
                     {isAuthenticated && user?.role === 'free' && (

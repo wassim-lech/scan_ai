@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import AppointmentForm from './components/AppointmentForm';
 import { LoginPage, SignupPage } from './components/Authpage';
 import './styles/App.css';
 
@@ -16,6 +17,7 @@ function App() {
             <Route path="/scan" element={<PlaceholderHomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/appointment" element={<AppointmentForm />} />
           </Routes>
         </main>
         <Footer />
