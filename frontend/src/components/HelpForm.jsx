@@ -17,7 +17,7 @@ const HelpForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5173/api/help', formData);
+      const response = await axios.post('http://localhost:5000/api/help', formData);
       alert(response.data.msg);
       setFormData({ subject: '', message: '' });
     } catch (err) {

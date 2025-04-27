@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import AppointmentForm from './components/AppointmentForm';
+import AppointmentForm from './components/AppointmentForm'; 
 import HelpForm from './components/HelpForm';
 import { LoginPage, SignupPage } from './components/Authpage';
 import './styles/App.css';
