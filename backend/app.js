@@ -2,12 +2,18 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./db');
 const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
+const helpRoutes = require('./routes/help');
+
+const PORT = process.env.PORT || 5173;
+
+// Initialize app
+const app = express();
+
 
 // Load environment variables
 require('dotenv').config();
 
-// Initialize app
-const app = express();
 
 // Connect to database
 connectDB();
@@ -19,8 +25,11 @@ app.use(cors({
   credentials: true
 }));
 
-// Routes
+// authentication
 app.use('/api/auth', authRoutes);
+// admin user
+app.use('/api/admin', adminRoutes);
+// help
+app.use('/api/help', helpRoutes);
 
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
