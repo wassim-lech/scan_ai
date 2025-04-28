@@ -1,11 +1,13 @@
+//backend/app.js
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./db');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const helpRoutes = require('./routes/help');
+const appointmentRoutes = require('./routes/appointments'); // Add this
 
-const PORT = process.env.PORT || 5173;
+const PORT = process.env.PORT || 5000;
 
 // Initialize app
 const app = express();
@@ -31,5 +33,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 // help
 app.use('/api/help', helpRoutes);
-
+// appointments
+app.use('/api/appointments', appointmentRoutes); 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
