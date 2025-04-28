@@ -1,3 +1,5 @@
+
+// backend/middleware/auth.js (updated)
 const jwt = require('jsonwebtoken');
 
 module.exports = function(req, res, next) {
@@ -12,9 +14,10 @@ module.exports = function(req, res, next) {
   try {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+    
     // Add user from payload
     req.user = decoded;
+    
     next();
   } catch (err) {
     res.status(401).json({ msg: 'Token is not valid' });
