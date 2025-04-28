@@ -1,5 +1,5 @@
 
-  document.querySelector('.settings-icon').addEventListener('click', () => {
+document.querySelector('.settings-icon').addEventListener('click', () => {
     toggleSidebar();
   });
   function toggleSidebar() {
