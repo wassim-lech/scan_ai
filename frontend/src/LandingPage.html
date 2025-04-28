@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Landing Page</title>
     <link rel="stylesheet" href="styleLandingPage.css">
     <script src="scriptLandingPage.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
     
 </head>
 <body>
@@ -14,21 +15,48 @@
         <nav class="navbar">
             <div class="logo">E-med</div>
             <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Scan</a></li>
-                <li><a href="#">About</a></li>
+                <li><a href="LandingPage.html">Home</a></li>
+                <li><a href="ScanPgae.html">Scan</a></li>
+                <li><a href="About.html">About</a></li>
                 <li><a href="#">Help & Support</a></li>
             </ul>
             <div class="nav-buttons">
                 <button class="login-btn">Log in</button>
                 <button class="signup-btn">Sign up</button>
-                <span class="settings-icon">
+                <span class="settings-icon"  >
                     <i class="fa-solid fa-gear" style="color: #1e57b8;"></i>
                 </span>
             </div>
             <div class="menu-toggle" onclick="toggleMenu()">☰</div>
         </nav>
     </header>
+    
+<aside class="sidebar hidden" id="sidebar">
+
+  <div class="sidebar-section">
+    <h3 class="section-title">General</h3>
+    <div class="sidebar-item"><i class="fa-solid fa-user-group"></i><span>Customers</span><span class="badge">104</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-link"></i><span>Connections</span><span class="badge">16</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-paper-plane"></i><span>Email automation</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-chart-bar"></i><span>Reporting</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-users-gear"></i><span>Team members</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-sliders"></i><span>Admin settings</span></div>
+  </div>
+  
+  <div class="sidebar-section">
+    <h3 class="section-title">Account</h3>
+    <div class="sidebar-item active"><i class="fa-solid fa-gear"></i><span>General</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-shield-halved"></i><span>Security</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-key"></i><span>Licenses</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-plug"></i><span>Integrations</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-user"></i><span>Account</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-bell"></i><span>Notifications</span></div>
+  </div>
+
+
+</aside>
+<div class="sidebar-overlay hidden" id="sidebarOverlay"></div> 
+
     <section class="hero">
         <div class="hero-content">
             <h1>Scan Your X-ray <br><span>Using AI For instant diagnosis</span></h1>
@@ -37,7 +65,7 @@
     
         <div class="hero-imageRobot">
             <img src="assets/robotDoctor.png" alt="AI Doctor" class="robot_img">
-            <img src="assets/Ellipse 14.png" alt="eclipse" class="eclipse">
+           <!-- <img src="assets/Ellipse 14.png" alt="eclipse" class="eclipse"> -->
         </div>
        
     </section>
@@ -235,6 +263,6 @@
    </div>
 </div>
 </footer>
-    <script src="script.js"></script> 
+<script src="scriptLandingPage.js"></script>
 </body>
 </html>
