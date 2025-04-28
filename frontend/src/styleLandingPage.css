@@ -180,8 +180,8 @@ body {
   border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-.section-title {
-  font-size: 10px;
+.title {
+  font-size: 14px;
   font-weight: 400;
   letter-spacing: 1px;
   margin-bottom: 12px;
@@ -237,7 +237,7 @@ body {
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.4); /* semi-transparent noir */
   z-index: 900; /* juste derrière la sidebar */
-  backdrop-filter: blur(1px); /* flou optionnel */
+  backdrop-filter: blur(2px); /* flou optionnel */
   transition: opacity 0.3s ease;
 }
 
@@ -249,17 +249,19 @@ body {
 .hero {
     position: relative;
     width: 100%;
-    padding: 50px;
+    min-height: 73.5vh;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 3.125rem 10%; /* ~50px 10% */
     background-color:#E1EEFF;
+    overflow: hidden;
 
 }
 
 .hero-content {
     max-width: 50%;
+    z-index: 2;
 }
 
 .hero-content h1 {
@@ -276,29 +278,30 @@ body {
     font-size: 1.2rem;
     color: #666;
     margin: 0.9375rem 0 1.25rem; /* ~15px 0 20px */
+    
 }
 
 
 .hero-imageRobot {
-  position: relative;
+  
   flex: 1;
+  position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-end;
+  align-items: flex-end;
+  
 }
 
 .robot-img {
-  width: 18.75rem; /* 300px */
+  width: 43rem; /* 300px */
   position: absolute;
-  z-index: 2;
-  bottom: 1.25rem; /* 20px */
+  bottom: -16rem;
+  
+  left: 0;
+  z-index: 1;
   
 }
-.elipse{
-  width: 25rem; /* 400px */
-  position: relative;
-  z-index: 1;
-}
+
 /* Stats Section */
 .stats {
     display: flex;
