@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const roleCheck = require('../middleware/roleCheck');
+
 const HelpRequest = require('../models/helpRequest');
 
 router.post('/', auth, async (req, res) => {
