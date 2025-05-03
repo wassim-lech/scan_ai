@@ -10,17 +10,18 @@ const Header = () => {
     return (
         <header className="header">
             <nav className="nav">
-                <div className="flex items-center">
-                    <Link to="/" className="nav-logo">E-med</Link>
+                
+                    <Link to="/" className="logo">E-med</Link>
+                    <ul>
                     <div className="nav-links">
-                        <Link to="/">Home</Link>
-                        <Link to="/scan">Scan</Link>
-                        <Link to="/about">About</Link>
-                        <Link to="/appointment">Book Appointment</Link>     
-
-                        <Link to="/help">Help & Support</Link>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/scan">Scan</Link></li>
+                        <li> <Link to="/about">About</Link></li> 
+                        <li><Link to="/help">Help & Support</Link></li>
+                        <li><Link to="/appointment">Book Appointment</Link>  </li>  
                     </div>
-                </div>
+                    </ul>
+              
                 <div className="user-actions">
                     {isAuthenticated ? (
                         <>

@@ -1,39 +1,43 @@
 import React from 'react';
 import '../styles/Footer.css'; // Updated path
-
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="container">
-        <div className="footer-content">
+        <div className="row">
           <div className="footer-col">
-            <h3 className="text-xl">About Us</h3>
-            <p>
-              E-med is dedicated to providing cutting-edge AI solutions for healthcare, including chest X-ray analysis and doctor appointment scheduling.
-            </p>
-          </div>
-          <div className="footer-col">
-            <h3 className="text-xl">Quick Links</h3>
+            <h4>Company</h4>
             <ul>
-              <li><a href="/">Home</a></li>
-              <li><a href="/about">About</a></li>
-              <li><a href="/scan">Scan</a></li>
-              <li><a href="/help">Help & Support</a></li>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Our Services</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Affiliate Program</a></li>
             </ul>
           </div>
           <div className="footer-col">
-            <h3 className="text-xl">Contact</h3>
-            <p>Email: support@emed.com</p>
-            <p>Phone: (123) 456-7890</p>
+            <h4>Get Help</h4>
+            <ul>
+              <li><a href="#">FAQs</a></li>
+              <li><a href="#">Payment Options</a></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Follow Us</h4>
             <div className="social-links">
-              <a href="#" className="fab fa-facebook-f"></a>
-              <a href="#" className="fab fa-twitter"></a>
-              <a href="#" className="fab fa-linkedin-in"></a>
+              <a href="#"><i className="fab fa-facebook-f"></i></a>
+              <a href="#"><i className="fab fa-twitter"></i></a>
+              <a href="#"><i className="fab fa-instagram"></i></a>
+              <a href="#"><i className="fab fa-linkedin-in"></i></a>
             </div>
           </div>
         </div>
-        <div className="copyright">
-          <p>&copy; 2025 E-med. All rights reserved.</p>
+        <br /><br /><br />
+        <hr />
+        <br />
+        <div className="row">
+          <div className="copyright">
+            <p>© 2024 SCANAI. All rights reserved.</p>
+          </div>
         </div>
       </div>
     </footer>
