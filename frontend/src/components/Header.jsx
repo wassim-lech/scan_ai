@@ -1,53 +1,45 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext'; // Updated path: ./context/AuthContext
+import { AuthContext } from '../context/AuthContext';
 
 import '../styles/Header.css';
 
 const Header = () => {
-    const { isAuthenticated, user, logout, upgradeToPremium } = useContext(AuthContext);
+    const { isAuthenticated, user, logout } = useContext(AuthContext);
+    const [menuOpen, setMenuOpen] = useState(false);
+    
+    const toggleMenu = () => {
+        setMenuOpen(!menuOpen);
+    };
 
     return (
-        <header className="header">
-            <nav className="nav">
-                
-                    <Link to="/" className="logo">E-med</Link>
-                    <ul>
-                    <div className="nav-links">
-                        <li><Link to="/">Home</Link></li>
-                        <li><Link to="/scan">Scan</Link></li>
-                        <li> <Link to="/about">About</Link></li> 
-                        <li><Link to="/help">Help & Support</Link></li>
-                        <li><Link to="/appointment">Book Appointment</Link>  </li>  
-                    </div>
-                    </ul>
-              
-                <div className="user-actions">
+        <header>
+            <nav className="navbar">
+                <Link to="/" className="logo">E-med</Link>
+                <ul className={`nav-links ${menuOpen ? 'active' : ''}`}>
+                    <li><Link to="/">Home</Link></li>
+                    <li><Link to="/scan">Scan</Link></li>
+                    <li><Link to="/about">About</Link></li>
+                    <li><Link to="/help">Help & Support</Link></li>
+                </ul>
+                <div className="nav-buttons">
                     {isAuthenticated ? (
                         <>
-                            <span>Welcome, {user?.username}</span>
+                            <span className="welcome-text">Welcome, {user?.username}</span>
                             {user?.role === 'premium' && <span className="premium-badge">Premium</span>}
-                            <button onClick={logout} className="btn btn-outline">Logout</button>
+                            <button onClick={logout} className="login-btn">Logout</button>
                         </>
                     ) : (
                         <>
-                            <Link to="/login" className="btn btn-outline">Log in</Link>
-                            <Link to="/signup" className="btn btn-primary">Sign up</Link>
-
+                            <Link to="/login" className="login-btn">Log in</Link>
+                            <Link to="/signup" className="signup-btn">Sign up</Link>
                         </>
                     )}
-                    {isAuthenticated && user?.role === 'free' && (
-                        <button onClick={upgradeToPremium} className="btn btn-primary">
-                            Upgrade to Premium
-                        </button>
-                    )}
-                    <button className="btn-icon" aria-label="Settings">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </button>
+                    <span className="settings-icon">
+                        <i className="fa-solid fa-gear"></i>
+                    </span>
                 </div>
+                <div className="menu-toggle" onClick={toggleMenu}>☰</div>
             </nav>
         </header>
     );
