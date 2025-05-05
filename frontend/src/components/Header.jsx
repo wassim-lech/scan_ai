@@ -121,7 +121,29 @@ const Header = () => {
         </div>
         <div className="sidebar-section">
           <h3 className="title">Account</h3>
-          {sidebarItems.map((item, index) => (
+          {isAuthenticated && (
+            <>
+              <div className={`sidebar-item ${activeItem === 6 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(6)}>
+                <i className="fa-solid fa-gear"></i><span>Appointments</span>
+              </div>
+              <div className={`sidebar-item ${activeItem === 7 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(7)}>
+                <i className="fa-solid fa-bell"></i><span>Notifications</span>
+              </div>
+              <div className={`sidebar-item ${activeItem === 8 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(8)}>
+                <i className="fa-solid fa-square-poll-horizontal"></i><span>Scan History</span>
+              </div>
+              <div className={`sidebar-item ${activeItem === 9 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(9)}>
+                <i className="fa-solid fa-credit-card"></i><span>Payment Options</span>
+              </div>
+              <div className={`sidebar-item ${activeItem === 10 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(10)}>
+                <i className="fa-solid fa-arrow-right-from-bracket"></i><span>Logout</span>
+              </div>
+              <div className={`sidebar-item ${activeItem === 11 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(11)}>
+                <i className="fa-solid fa-minus"></i><span>Delete My Account</span>
+              </div>
+            </>
+          )}
+          {!isAuthenticated && sidebarItems.map((item, index) => (
             <div
               key={index}
               className={`sidebar-item ${activeItem === 6 + index ? 'active' : ''}`}
