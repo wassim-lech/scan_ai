@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="StyleAbout.css">
+    <script src="scriptAboutUs.js " defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
 
@@ -17,7 +18,7 @@
                 <li><a href="LandingPage.html">Home</a></li>
                 <li><a href="ScanPgae.html">Scan</a></li>
                 <li><a href="About.html">About</a></li>
-                <li><a href="#">Help & Support</a></li>
+                <li><a href="HelpPage.html">Help & Support</a></li>
             </ul>
             <div class="nav-buttons">
                 <button class="login-btn">Log in</button>
@@ -29,8 +30,190 @@
             <div class="menu-toggle" onclick="toggleMenu()">☰</div>
         </nav>
     </header>
+       
+<aside class="sidebar hidden" id="sidebar">
 
-    <footer class="footer">
+    <div class="sidebar-section">
+      <h3 class="title">General</h3>
+      <div class="sidebar-item"><i class="fa-solid fa-user-group"></i><span>About</span></div>
+      <div class="sidebar-item"><i class="fa-solid fa-link"></i><span>Show Ai Confidence</span></div>
+      <div class="sidebar-item"><i class="fa-solid fa-lungs-virus"></i><span>Scan Now</span></div>
+      <div class="sidebar-item"><i class="fa-solid fa-user-group"> </i><span>Contacts</span></div>
+      <div class="sidebar-item"><i class="fa-solid fa-users-gear"></i><span>FAQs</span></div>
+      <div class="sidebar-item"><i class="fa-solid fa-sliders"></i><span>Language Selector</span></div>
+    </div>
+    
+    <div class="sidebar-section">
+      <h3 class="title">Account</h3>
+      <div class="sidebar-item active"><i class="fa-regular fa-calendar-check"></i><span>Appointments</span></div>
+      <div class="sidebar-item"><i class="fa-solid fa-bell"> </i><span>Notifications</span></div>
+      <div class="sidebar-item"><i class="fa-solid fa-square-poll-horizontal"></i><span>Scan History</span></div>
+      <div class="sidebar-item"><i class="fa-solid fa-credit-card"></i><span>Payment Options</span></div>
+      <div class="sidebar-item"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Logout</span></div>
+      <div class="sidebar-item"><i class="fa-solid fa-minus"></i></i><span>Delete My Account</span></div>
+    </div>
+  
+  
+  </aside>
+  <div class="sidebar-overlay hidden" id="sidebarOverlay"></div> 
+  
+    <section class="about-section">
+        <div class="corner-frame left-frame"></div>
+        <div class="corner-frame right-frame"></div>
+      
+        <div class="stat-box left-box">
+          <h3>1M+</h3>
+          <p>Trust By People</p>
+        </div>
+      
+        <div class="stat-box right-box">
+          <h3>99%+</h3>
+          <p>AI Accuracy</p>
+        </div>
+      
+        <div class="about-content">
+          <p class="about-tag">About Us!</p>
+          <h2 class="about-title">
+            Providing <span>AI Care for Pneumonia Detection</span>
+          </h2>
+          <p class="about-description">
+            where we provide personalized and comprehensive healthcare<br>
+            services to help you live your best life
+          </p>
+        </div>
+      </section>
+      <section class="about-us">
+        <div class="content">
+            <span class="tag">Revolutionary!</span>
+            <h1>Providing <span class="highlight">Fast</span> &Accurate Pneumonia Diagnosis</h1>
+            <p>"At E-Med, we’re transforming healthcare with AI-driven innovation. Our mission is to make early pneumonia detection fast, accurate, and accessible. Using state-of-the-art AI, we analyze X-ray scans in minutes, providing reliable insights backed by our team of expert radiologists. Whether you’re seeking peace of mind or need immediate care, our platform lets you upload X-rays and book appointments with trusted healthcare professionals seamlessly.</p>
+            <div class="buttons">
+                <button class="btn primary" > Scan Now</button>
+                <button class="btn secondary">Learn More</button>
+            </div>
+        </div>
+        <div class="image-container">
+            <img src="assets/AI-in-healthcare.jpg" alt="Doctor and patient" />
+            <div class="frame frame-1"></div>
+            <div class="frame frame-2"></div>
+          </div>
+    </section>    
+    <section class="doctors-section">
+        <h2>Our Best Doctors</h2>
+        <p class="subtitle">Meet our team of highly skilled medical professionals.</p>
+        <div class="doctors-grid">
+          <!-- Carte Docteur 1 -->
+          <div class="doctor-card">
+            <img src="assets/doctor1.jpg" alt="Dr. Emily Johnson">
+            <h3>Dr. Emily Johnson</h3>
+            <p>Critical Care Specialist</p>
+            <div class="social-icons">
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=13912&format=png&color=000000" alt="Facebook"></a>
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=xuvGCOXi8Wyg&format=png&color=000000" alt="Linkedin"></a>
+            </div>
+          </div>
+          <!-- Carte Docteur 2 -->
+          <div class="doctor-card">
+            <img src="assets/doctor2.jpg" alt="Dr. John Smith">
+            <h3>Dr. John Smith</h3>
+            <p>General Practitioner </p>
+            <div class="social-icons">
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=13912&format=png&color=000000" alt="Facebook"></a>
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=xuvGCOXi8Wyg&format=png&color=000000" alt="Linkedin"></a>
+            </div>
+          </div>
+          <!-- Carte Docteur 3 -->
+          <div class="doctor-card">
+            <img src="assets/doctor3.avif" alt="Dr. Sarah Davis">
+            <h3>Dr. Sarah Davis</h3>
+            <p>Pulmonologist</p>
+            <div class="social-icons">
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=13912&format=png&color=000000" alt="Facebook"></a>
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=xuvGCOXi8Wyg&format=png&color=000000" alt="Linkedin"></a>
+            </div>
+          </div>
+          <!-- Carte Docteur 4 -->
+          <div class="doctor-card">
+            <img src="assets/doctor4.jpg" alt="Dr. Michael Lee">
+            <h3>Dr. Michael Lee</h3>
+            <p>Pediatrician</p>
+            <div class="social-icons">
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=13912&format=png&color=000000" alt="Facebook"></a>
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=xuvGCOXi8Wyg&format=png&color=000000" alt="Linkedin"></a>
+            </div>
+          </div>
+          <!-- Carte Docteur 5 -->
+          <div class="doctor-card">
+            <img src="assets/doctor5.webp" alt="Dr. John Smith">
+            <h3>Dr. John Smith</h3>
+            <p>Pulmonologist</p>
+            <div class="social-icons">
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=13912&format=png&color=000000" alt="Facebook"></a>
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=xuvGCOXi8Wyg&format=png&color=000000" alt="Linkedin"></a>
+            </div>
+          </div>
+          <!-- Carte Docteur 6 -->
+          <div class="doctor-card">
+            <img src="assets/doctor6.jpg" alt="Dr. John Smith">
+            <h3>Dr. John Smith</h3>
+            <p>Emergency Medecine Doctor</p>
+            <div class="social-icons">
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=13912&format=png&color=000000" alt="Facebook"></a>
+              <a href="#"><img src="https://img.icons8.com/?size=100&id=xuvGCOXi8Wyg&format=png&color=000000" alt="Linkedin"></a>
+            </div>
+          </div>
+        </div>
+        <button class="view-all-btn">View All Doctors</button>
+        <p class="trusted-text">Trusted By Top Insurance Providers And Partners Worldwide</p>
+      </section>  
+      <section class="features-section">
+        <div class="features-header">
+          <span class="section-label">Features</span>
+          <h2>Discover Our Feature Packed Solution</h2>
+          <p class="features-description">
+            Our platform offers a wide range of features and benefits that will revolutionize the way you manage your healthcare.
+          </p>
+        </div>
+        <div class="features-grid">
+          <!-- Carte Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <img src="assets/icons8-x-ray-96.png" alt="X-ray">
+            </div>
+            <h3>AI-Powered X-Ray Analysis</h3>
+            <p>Our AI is trained on thousands of X-rays, validated by radiologists, ensuring reliable results you can trust.</p>
+          </div>
+          <!-- Carte Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <img src="assets/report.png" alt="results">
+            </div>
+            <h3>Instant Results</h3>
+            <p>Get clear, easy-to-understand insights within minutes of uploading your X-ray.</p>
+          </div>
+          <!-- Carte Feature 3 -->
+          <div class="feature-card highlight">
+            <div class="feature-icon">
+              <img src="assets/appointment.png" alt="appointment">
+            </div>
+            <h3>Appointment Booking</h3>
+            <p>Book consultations with licensed healthcare professionals directly through our platform, with flexible scheduling options.</p>
+          </div>
+        </div>
+      </section>
+
+<div class="newsletter-wrapper">
+      <div class="newsletter-container">
+        <p>Subscribe To Our Newsletter</p>
+        <div class="input-wrapper">
+            <input type="email" placeholder="Enter your email">
+            <button class="arrow-button">→</button>
+        </div>
+    </div>
+</div>
+    
+    <footer 
+    class="footer">
         <div class="container">
            <div  class="row">
                <div class="footer-col">
