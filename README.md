@@ -33,7 +33,7 @@ Mobile-friendly menu toggle.
 
 Authentication Pages:
 
-Login and Signup pages for user authentication, integrated with an AuthContext for state management.
+Login and Signup pages for user authentication,for all of the user types (free,premium,doctor and admin) integrated with an AuthContext for state management.
 
 
 Appointment and Help Pages:
@@ -47,13 +47,13 @@ Includes sections for Company (About Us, Services, Privacy Policy), Get Help (FA
 
 
 
-Planned Functionalities
+Functionalities that are still in construction(backdend side)
 
 Backend Integration: Connect to a backend API to process uploaded X-rays and return AI-generated pneumonia detection results.
-User Accounts: Store user data, scan history, and appointment details in a database (e.g., MongoDB).
+User Accounts: Store user data, scan history, and appointment details in a database ( MongoDB).
+the freeplan users can only use the model once,while the premium can use it 5 times,after that his sybscription expires and they can book appointments to the clinic but the premium user can also have a list of doctors to choose from when filling the appointment form
 Real-time Results: Display AI analysis results on the Scan page after processing.
-Appointment Scheduling: Implement a form to book consultations with healthcare providers.
-Multi-language Support: Add language selector functionality in the sidebar.
+Appointment Scheduling: Implementing a form to book consultations with healthcare providers.
 Security Enhancements: Implement secure file uploads and user authentication with JWT or OAuth.
 
 Technologies Used
@@ -66,11 +66,11 @@ JavaScript: For interactivity and state management.
 Font Awesome: For icons in the navbar, sidebar, and footer.
 
 
-Planned Backend:
+Backend:
 
 Node.js/Express: For API development.
 MongoDB: For database storage.
-AI Model: Integration with a machine learning model for X-ray analysis (e.g., TensorFlow or PyTorch).
+AI Model: Integration with a cnn model for X-ray analysis (using TensorFlow).
 
 
 Development Tools:
@@ -89,9 +89,6 @@ Git (for cloning the repository)
 
 Steps
 
-Clone the Repository:
-git clone https://github.com/your-username/e-med.git
-cd e-med
 
 
 Install Dependencies:
