@@ -5,6 +5,8 @@ import Footer from './components/Footer';
 import AppointmentForm from './components/AppointmentForm'; 
 import HelpForm from './components/HelpForm';
 import { LoginPage, SignupPage } from './components/Authpage';
+import LandingPage from './components/LandingPage';
+import ScanPage from './components/ScanPage';
 import './styles/App.css';
 
 function App() {
@@ -14,8 +16,8 @@ function App() {
         <Header />
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<PlaceholderHomePage />} /> {/* Use PlaceholderHomePage for now */}
-            <Route path="/scan" element={<PlaceholderHomePage />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/scan" element={<ScanPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/appointment" element={<AppointmentForm />} />
@@ -27,16 +29,5 @@ function App() {
     </Router>
   );
 }
-
-const PlaceholderHomePage = () => {
-  return (
-    <div className="content-container">
-      <div className="blue-content-box">
-        <h1>Page Coming Soon</h1>
-        <p>This page is under construction.</p>
-      </div>
-    </div>
-  );
-};
 
 export default App;

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/LandingPage.css';
 
-// Import your images - make sure to place them in the appropriate directory
-// For example in src/assets/images/
+// Import images
 import robotDoctor from '../assets/RobotDoctor3.png';
 import lungs from '../assets/lungs.png';
 import futureHealth from '../assets/Rectangle 15.png';
@@ -11,94 +10,9 @@ import avatar1 from '../assets/avatar.jpg';
 import avatar2 from '../assets/avatar2.jpg';
 
 const LandingPage = () => {
-    const [sidebarVisible, setSidebarVisible] = useState(false);
-    const [activeItem, setActiveItem] = useState(null);
-
-    const toggleSidebar = () => {
-        setSidebarVisible(!sidebarVisible);
-    };
-
-    const handleSidebarItemClick = (index) => {
-        setActiveItem(index);
-    };
-
-    // Close sidebar when clicking overlay
-    const handleOverlayClick = () => {
-        setSidebarVisible(false);
-    };
-
-    // Close sidebar when clicking outside
-    useEffect(() => {
-        const handleOutsideClick = (event) => {
-            const sidebar = document.getElementById('sidebar');
-            const icon = document.querySelector('.settings-icon');
-
-            if (sidebar && icon) {
-                const isClickInsideSidebar = sidebar.contains(event.target);
-                const isClickOnIcon = icon.contains(event.target);
-
-                if (!isClickInsideSidebar && !isClickOnIcon && sidebarVisible) {
-                    setSidebarVisible(false);
-                }
-            }
-        };
-
-        document.addEventListener('click', handleOutsideClick);
-        return () => {
-            document.removeEventListener('click', handleOutsideClick);
-        };
-    }, [sidebarVisible]);
-
     return (
         <div className="landing-page">
-            {/* Sidebar */}
-            <aside className={`sidebar ${sidebarVisible ? '' : 'hidden'}`} id="sidebar">
-                <div className="sidebar-section">
-                    <h3 className="title">General</h3>
-                    <div className={`sidebar-item ${activeItem === 0 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(0)}>
-                        <i className="fa-solid fa-user-group"></i><span>About</span>
-                    </div>
-                    <div className={`sidebar-item ${activeItem === 1 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(1)}>
-                        <i className="fa-solid fa-link"></i><span>Show Ai Confidence</span>
-                    </div>
-                    <div className={`sidebar-item ${activeItem === 2 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(2)}>
-                        <i className="fa-solid fa-lungs-virus"></i><span>Scan Now</span>
-                    </div>
-                    <div className={`sidebar-item ${activeItem === 3 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(3)}>
-                        <i className="fa-solid fa-user-group"></i><span>Contacts</span>
-                    </div>
-                    <div className={`sidebar-item ${activeItem === 4 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(4)}>
-                        <i className="fa-solid fa-users-gear"></i><span>FAQs</span>
-                    </div>
-                    <div className={`sidebar-item ${activeItem === 5 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(5)}>
-                        <i className="fa-solid fa-sliders"></i><span>Language Selector</span>
-                    </div>
-                </div>
-                
-                <div className="sidebar-section">
-                    <h3 className="title">Account</h3>
-                    <div className={`sidebar-item ${activeItem === 6 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(6)}>
-                        <i className="fa-solid fa-gear"></i><span>Appointments</span>
-                    </div>
-                    <div className={`sidebar-item ${activeItem === 7 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(7)}>
-                        <i className="fa-solid fa-bell"></i><span>Notifications</span>
-                    </div>
-                    <div className={`sidebar-item ${activeItem === 8 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(8)}>
-                        <i className="fa-solid fa-square-poll-horizontal"></i><span>Scan History</span>
-                    </div>
-                    <div className={`sidebar-item ${activeItem === 9 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(9)}>
-                        <i className="fa-solid fa-credit-card"></i><span>Payment Options</span>
-                    </div>
-                    <div className={`sidebar-item ${activeItem === 10 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(10)}>
-                        <i className="fa-solid fa-arrow-right-from-bracket"></i><span>Logout</span>
-                    </div>
-                    <div className={`sidebar-item ${activeItem === 11 ? 'active' : ''}`} onClick={() => handleSidebarItemClick(11)}>
-                        <i className="fa-solid fa-minus"></i><span>Delete My Account</span>
-                    </div>
-                </div>
-            </aside>
-            <div className={`sidebar-overlay ${sidebarVisible ? '' : 'hidden'}`} onClick={handleOverlayClick}></div>
-
+           
             {/* Hero Section */}
             <section className="hero">
                 <div className="hero-content">
@@ -246,6 +160,7 @@ const LandingPage = () => {
                     </div>
                 </div>
             </section>
+
         </div>
     );
 };
