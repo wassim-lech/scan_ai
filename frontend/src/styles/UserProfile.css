@@ -1,0 +1,28 @@
+.user-profile {
+    padding: 1.5rem;
+  }
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  .form-group label {
+    display: block;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+  }
+  button {
+    padding: 0.5rem 1rem;
+    background-color: #0660B4;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    margin-bottom: 0.5rem;
+  }

@@ -82,3 +82,31 @@ body {
 .selected-file {
   color: #10b981;
 }
+.tab-switch {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.tab-switch button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #5e21c7;
+  background: none;
+  cursor: pointer;
+}
+.tab-switch button.active {
+  background-color: #5e21c7;
+  color: white;
+}
+.history-container {
+  padding: 1rem;
+}
+.history-container h2 {
+  margin-bottom: 1rem;
+}
+.history-container ul {
+  list-style: none;
+  padding: 0;
+}
+.history-container li {
+  margin-bottom: 0.5rem;
+}
