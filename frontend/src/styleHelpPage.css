@@ -1,3 +1,4 @@
+
 * {
     margin: 0;
     padding: 0;
@@ -153,7 +154,7 @@ body {
 .sidebar {
   width: 280px;
   height: 100vh;
-  background-color: #0F2FFF;
+  background-color: #384cce;
   color: white;
   padding: 24px;
   box-shadow: 0 0 12px rgba(15,14, 255, 0.8);
@@ -324,11 +325,20 @@ body {
 
 /* Placeholder for icons (since we don't have actual images) */
 .category-card .icon {
-    width: 50px;
-    height: 50px;
-    background-color: #e0e0e0; /* Placeholder color */
-    border-radius: 50%;
+    width: 60px;
+    height: 60px;
     margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+}
+
+.category-card .icon img {
+    width: 45px;
+    height: 100%;
+    object-fit: contain;
 }
 
 /* Category title */
@@ -336,6 +346,7 @@ body {
     font-size: 1.2rem;
     color: #333;
     margin-bottom: 10px;
+
 }
 
 /* Category description */
@@ -370,6 +381,10 @@ body {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 300px;
 }
 
 /* First card has a dark background */
@@ -379,20 +394,35 @@ body {
 }
 
 .other-ways-card .icon {
-    width: 50px;
-    height: 50px;
-    background-color: #e0e0e0; /* Placeholder for icons */
+    width: 60px;
+    height: 60px;
+    background-color: #ebe8e8; /* Placeholder for icons */
     border-radius: 50%;
     margin-bottom: 15px;
 }
+.other-ways-card .icon img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 
+}
 /* Placeholder for the image in the last card */
 .other-ways-card:last-child .icon {
-    width: 100%;
-    height: 150px;
-    background-color: #e0e0e0;
+    width: 340px;
+    height: 168px;
     border-radius: 8px;
 }
+
+
+/* Ensure the image fills the container */
+.other-ways-card:last-child .icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Fills the container, may crop the image */
+    object-position: center; /* Centers the image within the container */
+    border-radius: 8px;
+}
+
 
 .other-ways-card h3 {
     font-size: 1.2rem;
@@ -408,6 +438,7 @@ body {
     color: #666;
     line-height: 1.5;
     margin-bottom: 15px;
+    flex-grow: 1;
 }
 
 .other-ways-card:first-child p {
@@ -423,6 +454,7 @@ body {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    align-self: flex-start;
 }
 
 .other-ways-card button:hover {
@@ -430,7 +462,7 @@ body {
 }
 .title-FAQ{
     
-    color: #1a0f75;
+    color: #372f86;
     font-size: 40px;
     text-align: center;
     margin-top: 80px;
@@ -460,6 +492,7 @@ body {
     color: #1d0f5f;
     font-weight: 700;
     cursor: pointer;
+
 }
 .question p{
     font-size: 22px;
@@ -468,7 +501,7 @@ body {
     line-height: 1.5;
     overflow: hidden;
     transition: all 0.6s ease;
-    color: #a39e79;
+    color: #1d1388;
 }
 .d-arrow{
     transition: transform 0.5s ease-in ;
@@ -502,6 +535,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 16px;
+    margin-bottom: 70px;
 }
 
 .contact-button {
@@ -512,6 +546,7 @@ body {
     border-radius: 9999px;
     font-size: 14px;
     cursor: pointer;
+    
 }
 
 .contact-button:hover {
@@ -595,6 +630,7 @@ ul {
     padding-left: 0.625rem; /* ~10px */
 }
 
+
 .footer-col .social-links a {
     display: inline-block;
     height: 2.5rem; /* ~40px */
@@ -617,4 +653,3 @@ ul {
     color: lemonchiffon;
     text-align: center;
 }
-
