@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="scriptHelpPage.js" defer></script>
+    <link rel="stylesheet" href="styleHelpPage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">E-med</div>
+            <ul class="nav-links">
+                <li><a href="LandingPage.html">Home</a></li>
+                <li><a href="ScanPgae.html">Scan</a></li>
+                <li><a href="About.html">About</a></li>
+                <li><a href="HelpPage.html">Help & Support</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <button class="login-btn">Log in</button>
+                <button class="signup-btn">Sign up</button>
+                <span class="settings-icon"  >
+                  <i class="fa-solid fa-bars" style="color: #1e57b8;"></i>
+                </span>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        </nav>
+    </header>
+    
+<aside class="sidebar hidden" id="sidebar">
+
+  <div class="sidebar-section">
+    <h3 class="title">General</h3>
+    <div class="sidebar-item"><i class="fa-solid fa-user-group"></i><span>About</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-link"></i><span>Show Ai Confidence</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-lungs-virus"></i><span>Scan Now</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-user-group"> </i><span>Contacts</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-users-gear"></i><span>FAQs</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-sliders"></i><span>Language Selector</span></div>
+  </div>
+  
+  <div class="sidebar-section">
+    <h3 class="title">Account</h3>
+    <div class="sidebar-item active"><i class="fa-regular fa-calendar-check"></i><span>Appointments</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-bell"> </i><span>Notifications</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-square-poll-horizontal"></i><span>Scan History</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-credit-card"></i><span>Payment Options</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Logout</span></div>
+    <div class="sidebar-item"><i class="fa-solid fa-minus"></i></i><span>Delete My Account</span></div>
+  </div>
+
+
+</aside>
+<div class="sidebar-overlay hidden" id="sidebarOverlay"></div> 
+
+ <!-- Help Section -->
+ <div class="help-section">
+    <h1>How Can We Help?</h1>
+    <div class="search-bar">
+        <input type="text" placeholder="Search for help on specific topics">
+        <button>Search</button>
+    </div>
+</div>
+
+<!-- Categories Section -->
+<div class="categories-section">
+    <div class="category-card">
+        <div class="icon"></div>
+        <h3>Setup & Configuration</h3>
+        <p>Suspendisse vitae eros dictum, gravida massa id, pellentesque est.</p>
+    </div>
+    <div class="category-card">
+        <div class="icon"></div>
+        <h3>Account & Security</h3>
+        <p>Suspendisse vitae eros dictum, gravida massa id, pellentesque est.</p>
+    </div>
+    <div class="category-card">
+        <div class="icon"></div>
+        <h3>Contact Management</h3>
+        <p>Suspendisse vitae eros dictum, gravida massa id, pellentesque est.</p>
+    </div>
+    <div class="category-card">
+        <div class="icon"></div>
+        <h3>Tasks & Calendar</h3>
+        <p>Suspendisse vitae eros dictum, gravida massa id, pellentesque est.</p>
+    </div>
+    <div class="category-card">
+        <div class="icon"></div>
+        <h3>Projects & Events</h3>
+        <p>Suspendisse vitae eros dictum, gravida massa id, pellentesque est.</p>
+    </div>
+    <div class="category-card">
+        <div class="icon"></div>
+        <h3>Sales</h3>
+        <p>Suspendisse vitae eros dictum, gravida massa id, pellentesque est.</p>
+    </div>
+    <div class="category-card">
+        <div class="icon"></div>
+        <h3>Business Insights</h3>
+        <p>Suspendisse vitae eros dictum, gravida massa id, pellentesque est.</p>
+    </div>
+    <div class="category-card">
+        <div class="icon"></div>
+        <h3>Capsule Mobile</h3>
+        <p>Suspendisse vitae eros dictum, gravida massa id, pellentesque est.</p>
+    </div>
+</div>
+
+ <!-- Other Ways Section -->
+ <div class="other-ways-section">
+    <h2>Other ways to get help</h2>
+    <div class="other-ways-grid">
+        <div class="other-ways-card">
+            <div class="icon"></div>
+            <h3>User Guides & Tutorials</h3>
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cum explicabo, itaque eveniet reiciendis accusamus soluta corporis expedita quibusdam, incidunt quis inventore ex. Assumenda sed facilis sapiente optio fugit? Distinctio, asperiores.</p>
+            <button>Read more</button>
+        </div>
+        <div class="other-ways-card">
+            <div class="icon"></div>
+            <h3>Emergency Medical ressources</h3>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam sapiente, vero optio ipsa perspiciatis deleniti similique quos sit nulla accusamus vel esse accusantium modi voluptates perferendis, neque sunt, pariatur libero.</p>
+            <button>Read more</button>
+        </div>
+        <div class="other-ways-card">
+            <div class="icon"></div>
+            <h3>We've got your back</h3>
+            <p>If you have any questions or need any support, please don't hesitate to contact our friendly support team.</p>
+            <button>Contact us</button>
+        </div>
+    </div>
+</div>
+
+<section>
+<h1 class="title-FAQ">FAQs</h1>
+<div class="questions-container">
+    <div class="question">
+        <button>
+            <span>How do I list my car for sale on your website ?</span>
+            <span><i  class="fa-solid fa-chevron-down"></i></span>
+        </button>
+        <p>To list your car for sale, simply create an account on our website and follow the prompts to create a new listing. You'll need to provide information about your car, including make, model, year, mileage, condition, photos, and any additional features.</p>
+    </div>
+    <div class="question">
+        <button>
+            <span>Do you offer any tools or tips to help me sell my car faster ?</span>
+            <span><i  class="fa-solid fa-chevron-down"></i></span>
+        </button>
+        <p>Yes, we provide various tools and tips to help you sell your car faster, including guidance on pricing, creating an attractive listing, and promoting your listing to potential buyers.</p>
+    </div>
+    <div class="question">
+        <button>
+            <span>What happens if I change my mind about selling my car?</span>
+            <span><i  class="fa-solid fa-chevron-down"></i></span>
+        </button>
+        <p>If you change your mind about selling your car, you can remove the listing from our website at any time through your account dashboard. There are no penalties for withdrawing your listing.</p>
+    </div>
+    <div class="question">
+        <button>
+            <span>Do you offer any guarantees or warranties for vehicles ?</span>
+            <span><i  class="fa-solid fa-chevron-down"></i></span>
+        </button>
+        <p>We facilitate transactions between buyers and sellers, but we do not directly offer guarantees or warranties on vehicles sold through our platform. However, many sellers may offer warranties or guarantees independently. We recommend reviewing the listing details and discussing any warranty options with the seller before making a purchase.</p>
+    </div>
+    <div class="question">
+        <button>
+            <span>How do you ensure the safety and security of transactions ?</span>
+            <span><i  class="fa-solid fa-chevron-down"></i></span>
+        </button>
+        <p>We prioritize the safety and security of our users and employ various measures to protect transactions on our platform. These include secure payment processing, identity verification, and monitoring for fraudulent activity. Additionally, we provide guidance on safe transaction practices to both buyers and sellers.</p>
+    </div>
+
+</div>
+
+<div class="ask-section">
+    <h3>Didn't find an answer?</h3>
+    <div class="button-group">
+        <button class="contact-button">Contact support</button>
+        <button class="feedback-button">Leave us feedback</button>
+    </div>
+</div>
+<script>
+    const buttons = document.querySelectorAll('button');
+
+    buttons.forEach( button =>{
+     button.addEventListener('click',()=>{
+    const faq = button.nextElementSibling;
+    const icon = button.children[1];
+
+    faq.classList.toggle('show');
+     icon.classList.toggle('rotate');
+})
+} )
+</script>
+
+</section>
+<footer class="footer">
+    <div class="container">
+       <div  class="row">
+           <div class="footer-col">
+               <h4>Company</h4>
+               <ul>
+                   <li><a href="http://">About Us</a></li>
+                   <li><a href="http://">Our Services</a></li>
+                   <li><a href="http://">Privacy Policy</a></li>
+                   <li><a href="http://">Affiliate Program</a></li>
+
+               </ul>
+           </div>
+           <div class="footer-col">
+               <h4>Get Help</h4>
+               <ul>
+                   <li><a href="http://">FAQs</a></li>
+                
+                   <li><a href="http://">Payment options</a></li>
+               </ul>
+           </div>
+           
+           <div class="footer-col">
+               <h4>Follow Us</h4>
+               <div class="social-links">
+                  
+                <a href="http://"><i class="fab fa-facebook-f"></i></a>
+                <a href="http://"><i class="fab fa-twitter"></i></a>
+                <a href="http://"><i class="fab fa-instagram"></i></a>
+                <a href="http://"><i class="fab fa-linkedin-in"></i></a>
+
+               </div>
+               
+       </div>
+      
+    </div>
+    <br>
+    <br>
+    <br>
+    <hr>
+    <br>
+   <div class="row">
+       <div class="copyright">
+       <p>&copy; 2024 SCANAI. All rights reserved.</p>
+       </div>
+   </div>
+</div>
+</footer>
+
+</body>
+</html>
