@@ -1,5 +1,3 @@
-/* Header.css */
-
 /* Navbar */
 .navbar {
   display: flex;
@@ -17,7 +15,7 @@
   text-decoration: none;
 }
 
-.nav-links {
+.navLinks {
   list-style: none;
   display: flex;
   gap: 3.1rem; /* ~50px */
@@ -25,18 +23,18 @@
   padding: 0;
 }
 
-.nav-links li {
+.navLinks li {
   list-style: none;
 }
 
-.nav-links li a {
+.navLinks li a {
   position: relative;
   text-decoration: none;
   color: #000;
   padding-bottom: 0.3125rem; /* ~5px */
 }
 
-.nav-links li a::after {
+.navLinks li a::after {
   content: "";
   position: absolute;
   left: 0;
@@ -47,21 +45,21 @@
   transition: width 0.3s ease-in-out;
 }
 
-.nav-links li a:hover {
+.navLinks li a:hover {
   color: #104db7;
 }
 
-.nav-links li a:hover::after {
+.navLinks li a:hover::after {
   width: 100%;
 }
 
-.nav-buttons {
+.navButtons {
   display: flex;
   align-items: center;
   gap: 0.9375rem; /* ~15px */
 }
 
-.login-btn, .signup-btn {
+.loginBtn, .signupBtn {
   padding: 0.5rem 1rem; /* ~8px 16px */
   border: 0.125rem solid #007bff; /* ~2px */
   border-radius: 1.25rem; /* ~20px */
@@ -72,26 +70,26 @@
   display: inline-block;
 }
 
-.login-btn {
+.loginBtn {
   background: transparent;
   color: #007bff;
 }
 
-.signup-btn {
+.signupBtn {
   background: #007bff;
   color: white;
 }
 
-.login-btn:hover {
+.loginBtn:hover {
   background: #007bff;
   color: white;
 }
 
-.signup-btn:hover {
+.signupBtn:hover {
   background: #0056b3;
 }
 
-.settings-icon {
+.settingsIcon {
   font-size: 1.5rem;
   cursor: pointer;
   margin-left: 0.625rem; /* ~10px */
@@ -99,15 +97,15 @@
   transition: color 0.3s;
 }
 
-.settings-icon:hover {
+.settingsIcon:hover {
   color: #007bff;
 }
 
-.welcome-text {
+.welcomeText {
   margin-right: 0.5rem;
 }
 
-.premium-badge {
+.premiumBadge {
   background-color: #ffd700;
   color: #333;
   padding: 0.25rem 0.5rem;
@@ -117,7 +115,7 @@
   margin-right: 0.5rem;
 }
 
-.menu-toggle {
+.menuToggle {
   display: none;
   font-size: 1.8rem;
   cursor: pointer;
@@ -142,11 +140,11 @@
   border-radius: 16px 0 0 16px;
 }
 
-.sidebar:not(.hidden) {
+.sidebarVisible {
   transform: translateX(0%);
 }
 
-.sidebar-section {
+.sidebarSection {
   margin-bottom: 30px;
   position: relative;
   padding-bottom: 12px;
@@ -162,12 +160,12 @@
   position: relative;
 }
 
-.sidebar-section:last-child {
+.sidebarSection:last-child {
   border-bottom: none;
   padding-bottom: 0;
 }
 
-.sidebar-item {
+.sidebarItem {
   display: flex;
   align-items: center;
   padding: 10px 12px;
@@ -177,26 +175,26 @@
   transition: background 0.2s ease;
 }
 
-.sidebar-item i {
+.sidebarItem i {
   margin-right: 12px;
   min-width: 20px;
 }
 
-.sidebar-item span {
+.sidebarItem span {
   flex-grow: 1;
   text-align: left;
 }
 
-.sidebar-item:hover {
+.sidebarItem:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.sidebar-item.active {
+.sidebarItemActive {
   background-color: white;
   color: #0F2FFF;
 }
 
-.sidebar-overlay {
+.sidebarOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -208,7 +206,7 @@
   transition: opacity 0.3s ease;
 }
 
-.sidebar-overlay.hidden {
+.sidebarOverlayHidden {
   display: none;
 }
 
@@ -220,7 +218,7 @@
     padding: 1rem 1.25rem;
   }
   
-  .nav-links {
+  .navLinks {
     display: none;
     flex-direction: column;
     width: 100%;
@@ -232,26 +230,26 @@
     text-align: center;
   }
   
-  .nav-links.active {
+  .navLinksActive {
     display: flex;
   }
   
-  .nav-links li {
+  .navLinks li {
     margin: 0.625rem 0;
   }
   
-  .nav-buttons {
+  .navButtons {
     display: none;
     flex-direction: column;
     align-items: center;
     width: 100%;
   }
   
-  .nav-buttons.active {
+  .navButtonsActive {
     display: flex;
   }
   
-  .menu-toggle {
+  .menuToggle {
     display: block;
   }
 }

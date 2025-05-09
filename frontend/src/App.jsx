@@ -8,6 +8,9 @@ import { LoginPage, SignupPage } from './components/Authpage';
 import LandingPage from './components/LandingPage';
 import ScanPage from './components/ScanPage';
 import './styles/App.css';
+import AdminDashboard from './components/AdminDashboard';
+import DoctorDashboard from './components/DoctorDashboard';
+import UserProfile from './components/UserProfile';
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/user-profile" element={<UserProfile />} />
+            <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/scan" element={<ScanPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
