@@ -2,13 +2,13 @@ import axios from 'axios';
 
 // Create axios instance with base URL
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-// Add a request interceptor to add auth token
+// Add request interceptor to add auth token to requests
 api.interceptors.request.use(
   config => {
     const token = localStorage.getItem('token');
@@ -22,15 +22,11 @@ api.interceptors.request.use(
   }
 );
 
-// Add a response interceptor to handle errors
+// Add response interceptor for error handling
 api.interceptors.response.use(
   response => response,
   error => {
-    // Handle unauthorized errors (expired token)
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/auth';
-    }
+    console.error('API Error:', error);
     return Promise.reject(error);
   }
 );

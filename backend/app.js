@@ -1,34 +1,36 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const connectDB = require('./db');
-const authRoutes = require('./routes/auth');
-const adminRoutes = require('./routes/admin');
-const helpRoutes = require('./routes/help');
-const appointmentRoutes = require('./routes/appointments');
+require('dotenv').config();
 
-const PORT = process.env.PORT || 5000;
-
-// Initialize app
 const app = express();
 
-// Load environment variables
-require('dotenv').config();
-console.log('MONGO_URI:', process.env.MONGO_URI); // Add this line for debugging
-
-// Connect to database
-connectDB();
-
 // Middleware
+app.use(cors());
 app.use(express.json());
-app.use(cors({
-  origin: 'http://localhost:5173', // Your React app URL
-  credentials: true
-}));
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/help', helpRoutes);
-app.use('/api/appointments', appointmentRoutes);
+// Direct test route to verify server is working
+app.get('/api/test', (req, res) => {
+  console.log('Test endpoint hit!');
+  res.json({ message: 'API server is working!' });
+});
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Connect to MongoDB
+// For local MongoDB connection
+const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/scanai';
+console.log('Connecting to MongoDB:', mongoURI);
+
+mongoose.connect(mongoURI)
+  .then(() => console.log('MongoDB Connected Successfully'))
+  .catch(err => console.error('MongoDB Connection Error:', err));
+
+// Define routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/admin', require('./routes/admin')); // If you have this route
+// Add other routes as needed
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Test endpoint available at: http://localhost:${PORT}/api/test`);
+});

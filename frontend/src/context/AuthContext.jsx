@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 // Create the context with a name that can be exported
 export const AuthContext = createContext();
@@ -26,16 +26,12 @@ export const AuthProvider = ({ children }) => {
       }
       
       try {
-        // Set default headers for all axios requests
-        axios.defaults.headers.common['x-auth-token'] = token;
-        
-        // Verify token and get user data
-        const res = await axios.get('/api/auth/user');
+        // Get user data with token
+        const res = await api.get('/auth/user');
         setUser(res.data);
       } catch (err) {
         console.error('Authentication error:', err.response?.data || err.message);
         localStorage.removeItem('token');
-        axios.defaults.headers.common['x-auth-token'] = '';
       } finally {
         setLoading(false);
       }
@@ -48,15 +44,18 @@ export const AuthProvider = ({ children }) => {
   const register = async (formData) => {
     setError(null);
     try {
-      const res = await axios.post('/api/auth/signup', formData);
+      console.log('Attempting registration with:', formData);
+      const res = await api.post('/auth/signup', formData);
+      console.log('Registration response:', res.data);
+      
       localStorage.setItem('token', res.data.token);
-      axios.defaults.headers.common['x-auth-token'] = res.data.token;
       
       // Get user data after successful registration
-      const userRes = await axios.get('/api/auth/user');
+      const userRes = await api.get('/auth/user');
       setUser(userRes.data);
       return true;
     } catch (err) {
+      console.error('Registration error:', err.response?.data || err);
       setError(err.response?.data?.msg || 'Registration failed');
       return false;
     }
@@ -66,15 +65,23 @@ export const AuthProvider = ({ children }) => {
   const login = async (formData) => {
     setError(null);
     try {
-      const res = await axios.post('/api/auth/login', formData);
+      console.log('Attempting login with:', formData);
+      const res = await api.post('/auth/login', formData);
+      console.log('Login response:', res.data);
+      
       localStorage.setItem('token', res.data.token);
-      axios.defaults.headers.common['x-auth-token'] = res.data.token;
       
       // Get user data after successful login
-      const userRes = await axios.get('/api/auth/user');
+      const userRes = await api.get('/auth/user');
+      console.log('User data:', userRes.data);
+      
       setUser(userRes.data);
       return true;
     } catch (err) {
+      console.error('Login error details:', err);
+      console.error('Response data:', err.response?.data);
+      console.error('Response status:', err.response?.status);
+      
       setError(err.response?.data?.msg || 'Invalid credentials');
       return false;
     }
@@ -83,14 +90,13 @@ export const AuthProvider = ({ children }) => {
   // Logout user
   const logout = () => {
     localStorage.removeItem('token');
-    axios.defaults.headers.common['x-auth-token'] = '';
     setUser(null);
   };
 
   // Upgrade to premium account
   const upgradeToPremium = async () => {
     try {
-      const res = await axios.post('/api/auth/upgrade-to-premium');
+      const res = await api.post('/auth/upgrade-to-premium');
       setUser(res.data.user);
       return true;
     } catch (err) {
@@ -102,10 +108,10 @@ export const AuthProvider = ({ children }) => {
   // Refresh scans for premium users
   const refreshScans = async () => {
     try {
-      const res = await axios.post('/api/auth/refresh-scans');
+      const res = await api.post('/auth/refresh-scans');
       
       // Update user data to reflect new scan count
-      const userRes = await axios.get('/api/auth/user');
+      const userRes = await api.get('/auth/user');
       setUser(userRes.data);
       
       return res.data;

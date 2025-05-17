@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+// Check if the model already exists before defining it
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -25,14 +26,10 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 1
   },
-  scanHistory: [{
-    date: {
-      type: Date,
-      default: Date.now
-    },
-    imageUrl: String,
-    result: String
-  }],
+  scanHistory: {
+    type: Array,
+    default: []
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -56,9 +53,5 @@ UserSchema.pre('save', async function(next) {
   }
 });
 
-// Method to compare passwords
-UserSchema.methods.comparePassword = async function(candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
-};
-
-module.exports = mongoose.model('User', UserSchema);
+// Use mongoose.models to check if the model exists before creating a new one
+module.exports = mongoose.models.User || mongoose.model('User', UserSchema);
