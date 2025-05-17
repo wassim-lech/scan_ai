@@ -1,38 +1,59 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute, RoleProtectedRoute } from './components/ProtectedRoute';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import AppointmentForm from './components/AppointmentForm'; 
-import HelpForm from './components/HelpForm';
-import { LoginPage, SignupPage } from './components/Authpage';
 import LandingPage from './components/LandingPage';
+import AuthPage from './components/Authpage';
+import UserProfile from './components/UserProfile';
 import ScanPage from './components/ScanPage';
-import './styles/App.css';
 import AdminDashboard from './components/AdminDashboard';
 import DoctorDashboard from './components/DoctorDashboard';
-import UserProfile from './components/UserProfile';
+import AppointmentForm from './components/AppointmentForm';
+import HelpPage from './components/HelpPage';
+import './styles/App.css';
 
 function App() {
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/user-profile" element={<UserProfile />} />
-            <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/scan" element={<ScanPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/appointment" element={<AppointmentForm />} />
-            <Route path="/help" element={<HelpForm />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <div className="app-container">
+          <Header />
+          <main className="main-content">
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/help" element={<HelpPage />} />
+              
+              {/* Protected routes (require authentication) */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/profile" element={<UserProfile />} />
+                <Route path="/scan" element={<ScanPage />} />
+                <Route path="/appointment" element={<AppointmentForm />} />
+              </Route>
+              
+              {/* Admin-only routes */}
+              <Route 
+                path="/admin" 
+                element={<RoleProtectedRoute roles={['admin']}><AdminDashboard /></RoleProtectedRoute>} 
+              />
+              
+              {/* Doctor-only routes */}
+              <Route 
+                path="/doctor" 
+                element={<RoleProtectedRoute roles={['doctor']}><DoctorDashboard /></RoleProtectedRoute>} 
+              />
+              
+              {/* Fallback route */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 

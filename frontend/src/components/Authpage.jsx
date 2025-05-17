@@ -1,204 +1,186 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import '../styles/Auth.css';
 
-const LoginPage = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const { login, isAuthenticated, error, clearError } = useContext(AuthContext);
-    const navigate = useNavigate();
+const AuthPage = () => {
+  const location = useLocation();
+  // Check if we were directed here with signup mode
+  const initialIsLogin = !(location.state?.isSignUp === true);
+  
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const { login, register, isAuthenticated, error } = useAuth();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        // Redirect if authenticated
-        if (isAuthenticated) {
-            navigate('/');
-        }
-        
-        // Clear errors when component mounts
-        clearError();
-        // eslint-disable-next-line
-    }, [isAuthenticated, navigate]);
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/profile');
+    }
+  }, [isAuthenticated, navigate]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        login({ email, password });
-    };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error for this field when user starts typing
+    if (formErrors[e.target.name]) {
+      setFormErrors({ ...formErrors, [e.target.name]: '' });
+    }
+  };
 
-    return (
-        <div className="auth-container">
-            <h2 className="auth-title">Log in to E-med</h2>
-            
-            {error && (
-                <div className="auth-error">
-                    {error}
-                </div>
-            )}
-            
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="email" className="form-label">Email address</label>
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="form-input"
-                    />
-                </div>
-                
-                <div className="form-group">
-                    <label htmlFor="password" className="form-label">Password</label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="form-input"
-                    />
-                </div>
-                
-                <div className="form-group">
-                    <button type="submit" className="form-button">
-                        Log in
-                    </button>
-                </div>
-            </form>
-            
-            <div className="auth-footer">
-                <p>
-                    Don't have an account?{' '}
-                    <Link to="/signup" className="auth-link">
-                        Sign up
-                    </Link>
-                </p>
-            </div>
-        </div>
-    );
-};
-
-const SignupPage = () => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [formError, setFormError] = useState('');
+  const validateForm = () => {
+    const errors = {};
     
-    const { register, isAuthenticated, error, clearError } = useContext(AuthContext);
-    const navigate = useNavigate();
+    if (isLogin) {
+      if (!formData.email) errors.email = 'Email is required';
+      if (!formData.password) errors.password = 'Password is required';
+    } else {
+      if (!formData.username) errors.username = 'Username is required';
+      if (!formData.email) errors.email = 'Email is required';
+      if (!formData.password) errors.password = 'Password is required';
+      if (formData.password.length < 6) errors.password = 'Password must be at least 6 characters';
+      if (formData.password !== formData.confirmPassword) errors.confirmPassword = 'Passwords do not match';
+    }
+    
+    return errors;
+  };
 
-    useEffect(() => {
-        // Redirect if authenticated
-        if (isAuthenticated) {
-            navigate('/');
-        }
-        
-        // Clear errors when component mounts
-        clearError();
-        // eslint-disable-next-line
-    }, [isAuthenticated, navigate]);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setFormError('');
-        
-        if (password !== confirmPassword) {
-            setFormError('Passwords do not match');
-            return;
-        }
-        
-        // Call register with the form data
-        register({
-            username: name, // Note: backend expects 'username' not 'name'
-            email,
-            password
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Form validation
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+    
+    console.log("Submitting form:", isLogin ? "Login" : "Signup");
+    console.log("Form data:", formData);
+    
+    let success;
+    try {
+      if (isLogin) {
+        success = await login({
+          email: formData.email,
+          password: formData.password
         });
-    };
+      } else {
+        console.log("Attempting registration with:", {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        });
+        success = await register({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        });
+      }
+      
+      console.log("Auth result:", success);
+      
+      if (success) {
+        navigate('/profile');
+      }
+    } catch (err) {
+      console.error("Auth error:", err);
+    }
+  };
 
-    return (
-        <div className="auth-container">
-            <h2 className="auth-title">Create your E-med account</h2>
-            
-            {(error || formError) && (
-                <div className="auth-error">
-                    {formError || error}
-                </div>
-            )}
-            
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="name" className="form-label">Full name</label>
-                    <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="form-input"
-                    />
-                </div>
-                
-                <div className="form-group">
-                    <label htmlFor="email" className="form-label">Email address</label>
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="form-input"
-                    />
-                </div>
-                
-                <div className="form-group">
-                    <label htmlFor="password" className="form-label">Password</label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="form-input"
-                    />
-                </div>
-                
-                <div className="form-group">
-                    <label htmlFor="confirmPassword" className="form-label">Confirm password</label>
-                    <input
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type="password"
-                        required
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="form-input"
-                    />
-                </div>
-                
-                <div className="form-group">
-                    <button type="submit" className="form-button">
-                        Sign up
-                    </button>
-                </div>
-            </form>
-            
-            <div className="auth-footer">
-                <p>
-                    Already have an account?{' '}
-                    <Link to="/login" className="auth-link">
-                        Log in
-                    </Link>
-                </p>
-            </div>
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
+          <p>Access your account or create a new one</p>
         </div>
-    );
+        
+        {error && <div className="auth-error">{error}</div>}
+        
+        <form className="auth-form" onSubmit={handleSubmit}>
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="username">Username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Enter your username"
+              />
+              {formErrors.username && <span className="error">{formErrors.username}</span>}
+            </div>
+          )}
+          
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+            />
+            {formErrors.email && <span className="error">{formErrors.email}</span>}
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+            />
+            {formErrors.password && <span className="error">{formErrors.password}</span>}
+          </div>
+          
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirm your password"
+              />
+              {formErrors.confirmPassword && <span className="error">{formErrors.confirmPassword}</span>}
+            </div>
+          )}
+          
+          <button type="submit" className="auth-btn">
+            {isLogin ? 'Login' : 'Sign Up'}
+          </button>
+        </form>
+        
+        <div className="auth-switch">
+          <p>
+            {isLogin ? "Don't have an account?" : "Already have an account?"}
+            <button
+              type="button"
+              className="switch-btn"
+              onClick={() => setIsLogin(!isLogin)}
+            >
+              {isLogin ? 'Sign Up' : 'Login'}
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export { LoginPage, SignupPage };
+export default AuthPage;

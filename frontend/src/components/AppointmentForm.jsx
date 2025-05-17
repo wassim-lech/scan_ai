@@ -1,6 +1,6 @@
 // src/components/AppointmentForm.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import  AuthContext  from '../context/AuthContext';
 import '../styles/AppointmentForm.css';
 
 const AppointmentForm = () => {

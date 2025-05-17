@@ -69,7 +69,7 @@ const Header = () => {
             <li><Link to="/scan">Scan</Link></li>
             <li><Link to="/appointment">Appointment</Link></li>
             <li><Link to="/about">About</Link></li>
-            <li><Link to="/user-profile">User</Link></li>
+            <li><Link to="/profile">Profile</Link></li>
             <li><Link to="/help">Help & Support</Link></li>
           </ul>
           <div className={`${styles.navButtons} ${menuOpen ? styles.navButtonsActive : ''}`}>
@@ -86,8 +86,10 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className={styles.loginBtn}>Log in</Link>
-                <Link to="/signup" className={styles.signupBtn}>Sign up</Link>
+                {/* Changed from /login to /auth to match the route in App.jsx */}
+                <Link to="/auth" className={styles.loginBtn}>Log in</Link>
+                {/* Added state to indicate signup mode when navigating to AuthPage */}
+                <Link to="/auth" state={{ isSignUp: true }} className={styles.signupBtn}>Sign up</Link>
               </>
             )}
             <span className={styles.settingsIcon} onClick={toggleSidebar}>
@@ -136,7 +138,7 @@ const Header = () => {
               <div className={`${styles.sidebarItem} ${activeItem === 9 ? styles.sidebarItemActive : ''}`} onClick={() => handleSidebarItemClick(9)}>
                 <i className="fa-solid fa-credit-card"></i><span>Payment Options</span>
               </div>
-              <div className={`${styles.sidebarItem} ${activeItem === 10 ? styles.sidebarItemActive : ''}`} onClick={() => handleSidebarItemClick(10)}>
+              <div className={`${styles.sidebarItem} ${activeItem === 10 ? styles.sidebarItemActive : ''}`} onClick={logout}>
                 <i className="fa-solid fa-arrow-right-from-bracket"></i><span>Logout</span>
               </div>
               <div className={`${styles.sidebarItem} ${activeItem === 11 ? styles.sidebarItemActive : ''}`} onClick={() => handleSidebarItemClick(11)}>

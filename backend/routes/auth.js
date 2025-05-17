@@ -1,8 +1,7 @@
-// backend/routes/auth.js (updated)
+// backend/routes/auth.js
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
 
@@ -12,15 +11,23 @@ router.post('/signup', async (req, res) => {
     const { username, email, password, role } = req.body;
     
     // Check if user exists
-    let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ msg: 'User already exists' });
+    let existingUser = await User.findOne({ $or: [{ email }, { username }] });
     
-    // Default role is 'free' if not specified
-    const userRole = role || 'free';
+    if (existingUser) {
+      if (existingUser.email === email) {
+        return res.status(400).json({ msg: 'Email already in use' });
+      } else {
+        return res.status(400).json({ msg: 'Username already taken' });
+      }
+    }
+    
+    // Default role is 'free' if not specified or if trying to register as admin
+    const userRole = (role && role !== 'admin') ? role : 'free';
     
     // Set initial scans based on role
     const scansRemaining = userRole === 'premium' ? 5 : 1;
     
+    // Create new user - password will be hashed by the pre-save hook
     user = new User({ 
       username, 
       email, 
@@ -35,7 +42,7 @@ router.post('/signup', async (req, res) => {
     const token = jwt.sign(
       { id: user._id, role: user.role }, 
       process.env.JWT_SECRET, 
-      { expiresIn: '1h' }
+      { expiresIn: '1d' }
     );
     
     res.status(201).json({ token });
@@ -54,15 +61,15 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
     
-    // Validate password
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Validate password - using the method we added to the UserSchema
+    const isMatch = await user.comparePassword(password);
     if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
     
     // Generate token
     const token = jwt.sign(
       { id: user._id, role: user.role }, 
       process.env.JWT_SECRET, 
-      { expiresIn: '1h' }
+      { expiresIn: '1d' }
     );
     
     res.json({ token });
@@ -86,8 +93,6 @@ router.get('/user', auth, async (req, res) => {
 // Upgrade to premium account
 router.post('/upgrade-to-premium', auth, async (req, res) => {
   try {
-    // In a real app, you would handle payment processing here
-    
     // Find user and update role
     const user = await User.findById(req.user.id);
     
@@ -119,8 +124,6 @@ router.post('/refresh-scans', auth, async (req, res) => {
     if (user.role !== 'premium') {
       return res.status(403).json({ msg: 'Only premium users can refresh scans' });
     }
-    
-    // In a real app, you would handle payment processing here
     
     user.scansRemaining = 5; // Refresh to 5 scans
     await user.save();

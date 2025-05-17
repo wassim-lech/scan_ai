@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import  AuthContext  from '../context/AuthContext';
 import '../styles/UserProfile.css';
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('profile');
