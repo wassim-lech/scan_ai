@@ -32,5 +32,4 @@ dist/
 build/
 # Vite, CRA etc.
 .cache/
-backend/.env
-backend/.env
+

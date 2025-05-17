@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
-import api from '../utils/api';
+import api from '../utils/api'; // Make sure to import the corrected api utility
 
-// Create the context with a name that can be exported
+// Create context
 export const AuthContext = createContext();
 
 // Hook for using the context
@@ -40,32 +40,13 @@ export const AuthProvider = ({ children }) => {
     checkLoggedIn();
   }, []);
 
-  // Register a new user
-  const register = async (formData) => {
-    setError(null);
-    try {
-      console.log('Attempting registration with:', formData);
-      const res = await api.post('/auth/signup', formData);
-      console.log('Registration response:', res.data);
-      
-      localStorage.setItem('token', res.data.token);
-      
-      // Get user data after successful registration
-      const userRes = await api.get('/auth/user');
-      setUser(userRes.data);
-      return true;
-    } catch (err) {
-      console.error('Registration error:', err.response?.data || err);
-      setError(err.response?.data?.msg || 'Registration failed');
-      return false;
-    }
-  };
-
   // Login user
   const login = async (formData) => {
     setError(null);
     try {
-      console.log('Attempting login with:', formData);
+      console.log('Login attempt with:', formData);
+      console.log('API URL:', 'http://localhost:5000/api/auth/login'); // Log the full URL for debugging
+      
       const res = await api.post('/auth/login', formData);
       console.log('Login response:', res.data);
       
@@ -87,39 +68,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout user
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-  };
-
-  // Upgrade to premium account
-  const upgradeToPremium = async () => {
+  // Register user  
+  const register = async (formData) => {
+    setError(null);
     try {
-      const res = await api.post('/auth/upgrade-to-premium');
-      setUser(res.data.user);
-      return true;
-    } catch (err) {
-      setError(err.response?.data?.msg || 'Upgrade failed');
-      return false;
-    }
-  };
-
-  // Refresh scans for premium users
-  const refreshScans = async () => {
-    try {
-      const res = await api.post('/auth/refresh-scans');
+      console.log('Registration attempt with:', formData);
       
-      // Update user data to reflect new scan count
+      const res = await api.post('/auth/signup', formData);
+      console.log('Registration response:', res.data);
+      
+      localStorage.setItem('token', res.data.token);
+      
+      // Get user data after successful registration
       const userRes = await api.get('/auth/user');
       setUser(userRes.data);
-      
-      return res.data;
+      return true;
     } catch (err) {
-      setError(err.response?.data?.msg || 'Failed to refresh scans');
+      console.error('Registration error:', err.response?.data || err);
+      setError(err.response?.data?.msg || 'Registration failed');
       return false;
     }
   };
+
+  // Rest of your AuthContext code...
 
   return (
     <AuthContext.Provider
@@ -129,9 +100,20 @@ export const AuthProvider = ({ children }) => {
         error,
         register,
         login,
-        logout,
-        upgradeToPremium,
-        refreshScans,
+        logout: () => {
+          localStorage.removeItem('token');
+          setUser(null);
+        },
+        upgradeToPremium: async () => {
+          try {
+            const res = await api.post('/auth/upgrade-to-premium');
+            setUser(res.data.user);
+            return true;
+          } catch (err) {
+            setError(err.response?.data?.msg || 'Upgrade failed');
+            return false;
+          }
+        },
         isAuthenticated: !!user,
         isAdmin: user?.role === 'admin',
         isDoctor: user?.role === 'doctor',
@@ -143,5 +125,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Also export the context as default for files that import it that way
 export default AuthContext;
