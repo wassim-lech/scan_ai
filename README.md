@@ -1,50 +1,61 @@
-Scan-AI AI-Powered X-ray Diagnosis Website
-Project Overview
+# Scan-AI: AI-Powered X-ray Diagnosis Website
+
+## Project Overview
 The Scan-AI website is an innovative healthcare platform that leverages artificial intelligence (AI) to provide instant pneumonia detection from chest X-ray images. Designed to bridge the gap between advanced medical technology and accessible healthcare, Scan-AI aims to deliver fast, secure, and highly accurate diagnostic results to users worldwide. The platform is built using React for the frontend, with a focus on a user-friendly interface, and is intended to integrate with a backend system (currently under development) for processing uploaded X-rays.
 This project is in active development, with core features including a landing page, a scan page for X-ray uploads, and supporting pages for appointments, help, login, and signup. The context revolves around improving healthcare accessibility by providing preliminary AI-driven insights, which can be followed up with professional medical consultation.
-Context
-The healthcare industry faces challenges such as delayed diagnoses, especially in remote or underserved areas where access to radiologists is limited. Pneumonia, a potentially life-threatening condition, requires timely detection for effective treatment. Scan-AI addresses this by utilizing AI to analyze chest X-rays with over 99% accuracy, offering a preliminary diagnosis within moments of uploading an image. This project is inspired by the need for scalable, cost-effective diagnostic tools and serves as a prototype for future expansion into other medical imaging analyses.
+## Context
+The healthcare industry faceschallenges such as delayed diagnoses, especially in remote or underserved areas where access to radiologists is limited. Pneumonia, a potentially life-threatening condition, requires timely detection for effective treatment. Scan-AI addresses this by utilizing AI to analyze chest X-rays with over 99% accuracy, offering a preliminary diagnosis within moments of uploading an image. This project is inspired by the need for scalable, cost-effective diagnostic tools and serves as a prototype for future expansion into other medical imaging analyses.
 The website is designed for both general users (patients) and healthcare providers, with features like user authentication, appointment booking, and help support. Future integration with a backend API and a database (e.g., MongoDB) will enable personalized user experiences, scan history tracking, and secure data storage.
-Features
-Current Functionalities
-Landing Page
+## Features
+### Current Functionalities
+#### Landing Page
 
-A welcoming interface showcasing the purpose of Scan-AI, including a hero section, statistics (e.g., 24/7 support, 100+ doctors, 1M+ active patients), services (pneumonia detection, diagnosis records, appointments, consultations), testimonials, and reasons to choose Scan-AI.
+A welcoming interfaceshowcasing the purpose of Scan-AI, including a hero section, statistics (e.g., 24/7 support, 100+ doctors, 1M+ active patients), services (pneumonia detection, diagnosis records, appointments, consultations), testimonials, and reasons to choose Scan-AI.
 Responsive design with a navbar and footer for navigation.
 
-Scan Page
+#### Scan Page
 
-Allows users to upload chest X-ray images (JPG, PNG, JPEG) for AI-driven pneumonia detection.
+Allows usersto upload chest X-ray images (JPG, PNG, JPEG) for AI-driven pneumonia detection.
 Displays a user-friendly upload box with a drag-and-drop-like interface, showing the selected file name upon upload.
 Provides instructions and accepted file formats.
 
-Navbar and Sidebar
+#### Navbar and Sidebar
 
-A responsive navbar with links to Home, Scan, About, Help & Support, and Appointment pages.
+A responsive navbarwith links to Home, Scan, About, Help & Support, and Appointment pages.
 A settings icon that toggles a sidebar with sections for General (e.g., Customers, Connections) and Account (e.g., General, Security, Notifications).
 Dynamic sidebar content based on user authentication status (logged-in vs. logged-out views).
 Mobile-friendly menu toggle.
 
-Authentication Pages
+#### Authentication Pages
 
-Login and Signup pages for user authentication, supporting all user types (free, premium, doctor, and admin), integrated with an AuthContext for state management.
+Login and Signuppages for user authentication, supporting all user types (free, premium, doctor, and admin), integrated with an AuthContext for state management.
 
-Appointment and Help Pages
+#### Appointment and Help Pages
 
-For booking appointments and accessing help/support, expanded with form functionality for appointments, currently integrating Formspree.
+For booking appointmentsand accessing help/support, expanded with form functionality for appointments, currently integrating Formspree.
 
-Footer
+#### Footer
 
-Includes sections for Company (About Us, Services, Privacy Policy), Get Help (FAQs, Payment Options), and social media links, with a copyright notice.
+Includes sectionsfor Company (About Us, Services, Privacy Policy), Get Help (FAQs, Payment Options), and social media links, with a copyright notice.
 
-Functionalities That Are Still in Construction (Backend Side)
+## Recent Updates
+
+**Authentication System Fix (May 17, 2025)**:
+- ✅ Fixed all authentication-related issues
+- ✅ Consolidated server architecture
+- ✅ Enhanced error handling and improved security
+- ✅ Updated documentation and added troubleshooting guides
+
+For detailed information about authentication fixes, see [AUTH_FIXES_FINAL.md](./AUTH_FIXES_FINAL.md).
+
+## Functionalities That Are Still in Construction (Backend Side)
 
 Backend Integration: Connect to a backend API to process uploaded X-rays and return AI-generated pneumonia detection results.
 User Accounts: Store user data, scan history, and appointment details in a database (MongoDB).
 Free plan users can only use the model once, while premium users can use it 5 times before their subscription expires.
 Both user types can book appointments at the clinic, but premium users have access to a list of doctors to choose from when filling the appointment form.
-The admin can view the traffic on the website as well as the user's requierments and answer them (from help form) and see the appointments scheduled for all the users and their scan history and account info
-the doctor can view his patients scan result and his appointments
+The admin can view the traffic on the website as well as the user's requirements and answer them (from help form) and see the appointments scheduled for all the users and their scan history and account info
+The doctor can view their patients' scan results and appointments
 
 
 Real-time Results: Display AI analysis results on the Scan page after processing.
@@ -216,12 +227,60 @@ UI/UX Improvements: Enhance the design of the Scan page or add animations.
 Testing: Write unit and integration tests for components.
 Security: Add file upload validation and secure authentication.
 
-License
-This project is under the MIT License - see the LICENSE file for details.
-Contact
-For questions or collaboration, please contact [your-email@example.com] or open an issue on the GitHub repository.
-Acknowledgments
+## Setup and Installation
 
-Inspired by the need for accessible healthcare diagnostics.
-Thanks to the open-source community for tools like React and Font Awesome.
+For detailed setup instructions, please refer to the [SETUP.md](./SETUP.md) guide. Here's a quick start guide:
+
+### Backend Setup
+
+1. Navigate to the backend directory:
+   ```
+   cd backend
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Start the backend server:
+   ```
+   npm start
+   ```
+   
+   Or use the PowerShell script we created:
+   ```
+   .\start-server.ps1
+   ```
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Start the frontend development server:
+   ```
+   npm run dev
+   ```
+
+4. Access the application at http://localhost:5173 in your web browser
+
+## License
+This project is under the MIT License - see the LICENSE file for details.
+
+## Contact
+For questions or collaboration, please contact [your-email@example.com] or open an issue on the GitHub repository.
+
+## Acknowledgments
+
+- Inspired by the need for accessible healthcare diagnostics
+- Thanks to the open-source community for tools like React, Express, and MongoDB
+- Special thanks to everyone who contributed to fixing the authentication issues
 

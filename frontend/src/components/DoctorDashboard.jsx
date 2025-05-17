@@ -9,7 +9,7 @@ const DoctorDashboard = () => {
   }, []);
 
   const fetchAppointments = async () => {
-    const response = await fetch('http://localhost:5000/api/appointments/doctor', {
+    const response = await fetch('http://localhost:5001/api/appointments/doctor', { // Updated port
       headers: { 'x-auth-token': localStorage.getItem('token') },
     });
     const data = await response.json();

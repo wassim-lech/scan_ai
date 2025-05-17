@@ -8,8 +8,7 @@ module.exports = function(req, res, next) {
   if (!token) {
     return res.status(401).json({ msg: 'No token, authorization denied' });
   }
-  
-  try {
+    try {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'defaultsecret');
     
@@ -17,6 +16,16 @@ module.exports = function(req, res, next) {
     req.user = decoded;
     next();
   } catch (err) {
+    console.error('Auth middleware error:', err.message);
+    
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({ msg: 'Token has expired, please log in again' });
+    }
+    
+    if (err.name === 'JsonWebTokenError') {
+      return res.status(401).json({ msg: 'Invalid token format' });
+    }
+    
     res.status(401).json({ msg: 'Token is not valid' });
   }
 };

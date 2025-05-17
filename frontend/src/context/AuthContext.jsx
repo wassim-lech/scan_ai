@@ -1,60 +1,57 @@
-import React, { createContext, useState, useEffect } from 'react';
-import api from '../utils/api'; // Make sure to import the corrected api utility
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import api from '../utils/api';
 
-// Create context
 export const AuthContext = createContext();
-
-// Hook for using the context
-export const useAuth = () => React.useContext(AuthContext);
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Check if user is already logged in (on page load)
+  // Load user from token
   useEffect(() => {
-    const checkLoggedIn = async () => {
-      setLoading(true);
-      
-      // Check if token exists in localStorage
+    const loadUser = async () => {
       const token = localStorage.getItem('token');
-      
       if (!token) {
         setLoading(false);
         return;
       }
       
       try {
-        // Get user data with token
         const res = await api.get('/auth/user');
         setUser(res.data);
+        console.log('User loaded successfully:', res.data);
       } catch (err) {
-        console.error('Authentication error:', err.response?.data || err.message);
+        console.error('Error loading user:', err);
+        console.error('Response data:', err.response?.data);
+        console.error('Response status:', err.response?.status);
         localStorage.removeItem('token');
       } finally {
         setLoading(false);
       }
     };
     
-    checkLoggedIn();
+    loadUser();
   }, []);
-
-  // Login user
+  // Login
   const login = async (formData) => {
     setError(null);
     try {
       console.log('Login attempt with:', formData);
-      console.log('API URL:', 'http://localhost:5000/api/auth/login'); // Log the full URL for debugging
+      console.log('API URL being used:', '/auth/login'); // For debugging
       
-      const res = await api.post('/auth/login', formData);
+      const res = await api.post('/auth/login', {
+        email: formData.email,
+        password: formData.password
+      });
+      
       console.log('Login response:', res.data);
-      
       localStorage.setItem('token', res.data.token);
       
-      // Get user data after successful login
+      // Get user data
       const userRes = await api.get('/auth/user');
-      console.log('User data:', userRes.data);
+      console.log('User data retrieved:', userRes.data);
       
       setUser(userRes.data);
       return true;
@@ -62,35 +59,60 @@ export const AuthProvider = ({ children }) => {
       console.error('Login error details:', err);
       console.error('Response data:', err.response?.data);
       console.error('Response status:', err.response?.status);
-      
       setError(err.response?.data?.msg || 'Invalid credentials');
       return false;
     }
   };
-
-  // Register user  
+  // Register
   const register = async (formData) => {
     setError(null);
     try {
       console.log('Registration attempt with:', formData);
+      console.log('API URL being used:', '/auth/signup'); // For debugging
       
-      const res = await api.post('/auth/signup', formData);
+      const res = await api.post('/auth/signup', {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password
+      });
+      
       console.log('Registration response:', res.data);
-      
       localStorage.setItem('token', res.data.token);
       
-      // Get user data after successful registration
+      // Get user data
       const userRes = await api.get('/auth/user');
+      console.log('User data retrieved after registration:', userRes.data);
+      
       setUser(userRes.data);
       return true;
     } catch (err) {
-      console.error('Registration error:', err.response?.data || err);
+      console.error('Registration error details:', err);
+      console.error('Response data:', err.response?.data);
+      console.error('Response status:', err.response?.status);
       setError(err.response?.data?.msg || 'Registration failed');
       return false;
     }
   };
 
-  // Rest of your AuthContext code...
+  // Logout
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+  };
+  // Upgrade to premium
+  const upgradeToPremium = async () => {
+    try {
+      const res = await api.post('/auth/upgrade-to-premium', {});
+      console.log('Upgrade response:', res.data);
+      setUser(res.data.user);
+      return true;
+    } catch (err) {
+      console.error('Upgrade error details:', err);
+      console.error('Response data:', err.response?.data);
+      setError(err.response?.data?.msg || 'Upgrade failed');
+      return false;
+    }
+  };
 
   return (
     <AuthContext.Provider
@@ -98,22 +120,10 @@ export const AuthProvider = ({ children }) => {
         user,
         loading,
         error,
-        register,
         login,
-        logout: () => {
-          localStorage.removeItem('token');
-          setUser(null);
-        },
-        upgradeToPremium: async () => {
-          try {
-            const res = await api.post('/auth/upgrade-to-premium');
-            setUser(res.data.user);
-            return true;
-          } catch (err) {
-            setError(err.response?.data?.msg || 'Upgrade failed');
-            return false;
-          }
-        },
+        register,
+        logout,
+        upgradeToPremium,
         isAuthenticated: !!user,
         isAdmin: user?.role === 'admin',
         isDoctor: user?.role === 'doctor',

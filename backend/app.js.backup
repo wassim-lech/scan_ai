@@ -1,0 +1,13 @@
+/**
+ * IMPORTANT: This file is currently not being used as the main server entry point.
+ * 
+ * We recommend using server.js instead to avoid confusion and potential port conflicts.
+ * Consider either:
+ * 1. Removing this file
+ * 2. Renaming it to something like "app.config.js" and using it only for configuration
+ * 3. Consolidating the unique functionality from this file into server.js
+ * 
+ * The application now runs on port 5001 via the server.js file.
+ */
+
+// Original app.js content below...

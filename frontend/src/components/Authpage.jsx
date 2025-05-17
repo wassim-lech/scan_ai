@@ -5,35 +5,43 @@ import '../styles/Auth.css';
 
 const AuthPage = () => {
   const location = useLocation();
-  // Check if we were directed here with signup mode
-  const initialIsLogin = !(location.state?.isSignUp === true);
+  const navigate = useNavigate();
+  const { login, register, isAuthenticated, error } = useAuth();
   
-  const [isLogin, setIsLogin] = useState(initialIsLogin);
+  // Check if we're in signup mode from the URL state
+  const [isLogin, setIsLogin] = useState(!(location.state?.isSignUp === true));
+  
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
+  
   const [formErrors, setFormErrors] = useState({});
-  const { login, register, isAuthenticated, error } = useAuth();
-  const navigate = useNavigate();
-
-  // Redirect if already authenticated
+  
+  // Redirect if authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/profile');
     }
   }, [isAuthenticated, navigate]);
-
+  
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    // Clear error for this field when user starts typing
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    
+    // Clear error for this field when user types
     if (formErrors[e.target.name]) {
-      setFormErrors({ ...formErrors, [e.target.name]: '' });
+      setFormErrors({
+        ...formErrors,
+        [e.target.name]: ''
+      });
     }
   };
-
+  
   const validateForm = () => {
     const errors = {};
     
@@ -50,7 +58,7 @@ const AuthPage = () => {
     
     return errors;
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -67,16 +75,13 @@ const AuthPage = () => {
     let success;
     try {
       if (isLogin) {
+        // Just pass email and password for login
         success = await login({
           email: formData.email,
           password: formData.password
         });
       } else {
-        console.log("Attempting registration with:", {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password
-        });
+        // Pass all fields for registration
         success = await register({
           username: formData.username,
           email: formData.email,
@@ -93,7 +98,7 @@ const AuthPage = () => {
       console.error("Auth error:", err);
     }
   };
-
+  
   return (
     <div className="auth-container">
       <div className="auth-card">

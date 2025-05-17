@@ -14,7 +14,7 @@ const ScanPage = () => {
 
   const fetchScanHistory = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/user/scan-history', {
+      const response = await fetch('http://localhost:5001/api/user/scan-history', { // Updated port
         headers: { 'x-auth-token': localStorage.getItem('token') },
       });
       const data = await response.json();
@@ -38,7 +38,7 @@ const ScanPage = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:5000/api/scan/upload', {
+      const response = await fetch('http://localhost:5001/api/scan/upload', { // Updated port
         method: 'POST',
         headers: { 'x-auth-token': localStorage.getItem('token') },
         body: formData,

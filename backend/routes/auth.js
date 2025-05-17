@@ -3,62 +3,79 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
-const User = require('../models/User');
+const User = require('../models/user'); // Make sure this path matches your file structure
 
-// Test route - should be accessible at /api/auth/test
+// Test route
 router.get('/test', (req, res) => {
-  console.log('Auth test endpoint hit!');
-  res.json({ message: 'Auth API is working!' });
+  res.json({ message: 'Auth API is working' });
 });
 
 // Login route
 router.post('/login', async (req, res) => {
   try {
-    console.log('Login attempt:', req.body);
+    console.log('Login request body:', req.body);
     const { email, password } = req.body;
 
-    // Check for user with that email
+    if (!email || !password) {
+      console.log('Missing email or password');
+      return res.status(400).json({ msg: 'Please provide email and password' });
+    }
+
+    // Find user by email
     const user = await User.findOne({ email });
     console.log('User found:', user ? 'Yes' : 'No');
 
     if (!user) {
-      console.log('User not found with email:', email);
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
-    // Compare passwords
+    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     console.log('Password match:', isMatch ? 'Yes' : 'No');
 
     if (!isMatch) {
-      console.log('Password incorrect for user:', email);
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
-    // User matched, create and return token
+    // Generate JWT
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET || 'defaultsecret',
       { expiresIn: '1d' }
-    );
-    console.log('Login successful, token generated for user:', email);
-    
+    );    console.log('Login successful, token generated');
     res.json({ token });
   } catch (err) {
-    console.error('Login error:', err.message);
-    res.status(500).json({ msg: 'Server error' });
+    console.error('Login error details:', err);
+    
+    // Handle specific error types
+    if (err.name === 'ValidationError') {
+      console.log('Validation error detected');
+      return res.status(400).json({ msg: 'Invalid input data' });
+    }
+    
+    // Better error message for frontend
+    res.status(500).json({ 
+      msg: 'Server error during login. Please try again.', 
+      details: err.message
+    });
   }
 });
 
 // Registration route
 router.post('/signup', async (req, res) => {
   try {
-    console.log('Registration attempt:', req.body);
+    console.log('Registration request body:', req.body);
     const { username, email, password } = req.body;
-    
-    // Check if user exists
+
+    if (!username || !email || !password) {
+      console.log('Missing required fields');
+      return res.status(400).json({ msg: 'Please provide all required fields' });
+    }
+
+    console.log('Checking if user exists...');
+    // Check if user already exists
     let user = await User.findOne({ $or: [{ email }, { username }] });
-    
+
     if (user) {
       if (user.email === email) {
         return res.status(400).json({ msg: 'Email already in use' });
@@ -66,30 +83,44 @@ router.post('/signup', async (req, res) => {
         return res.status(400).json({ msg: 'Username already taken' });
       }
     }
-    
+
     // Create new user
     user = new User({
       username,
       email,
-      password, // Will be hashed in the pre-save hook
+      password, // Will be hashed via pre-save hook in User model
       role: 'free',
-      scansRemaining: 1
+      scansRemaining: 1,
+      scanHistory: []
     });
-    
-    // Save user to database
+
     await user.save();
-    
-    // Generate token
+
+    // Generate JWT
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET || 'defaultsecret',
       { expiresIn: '1d' }
-    );
-    
+    );    console.log('Registration successful, token generated');
     res.status(201).json({ token });
   } catch (err) {
-    console.error('Registration error:', err.message);
-    res.status(500).json({ msg: 'Server error' });
+    console.error('Registration error details:', err);
+    
+    // Check for MongoDB duplicate key error
+    if (err.name === 'MongoError' || err.code === 11000) {
+      console.log('Duplicate key error detected');
+      return res.status(400).json({ msg: 'User already exists with that email or username' });
+    }
+    
+    // Check for validation errors
+    if (err.name === 'ValidationError') {
+      console.log('Validation error detected');
+      const messages = Object.values(err.errors).map(val => val.message);
+      return res.status(400).json({ msg: messages.join(', ') });
+    }
+    
+    // Generic error
+    res.status(500).json({ msg: 'Server error: ' + err.message });
   }
 });
 
@@ -99,7 +130,7 @@ router.get('/user', auth, async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
   } catch (err) {
-    console.error(err.message);
+    console.error('Error getting user:', err);
     res.status(500).json({ msg: 'Server error' });
   }
 });
