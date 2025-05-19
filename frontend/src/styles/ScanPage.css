@@ -10,17 +10,17 @@ body {
   background-color: #f8f9fa;
 }
 
-
-
-/* Upload */
+/* Upload Container */
 .upload-container {
   font-family: 'Segoe UI', sans-serif;
   text-align: center;
   padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .upload-container h1 {
-    color: #222;
+  color: #222;
   font-size: 2rem;
   margin-bottom: 10px;
 }
@@ -31,6 +31,135 @@ body {
   margin-bottom: 40px;
 }
 
+/* Error message */
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border-left: 4px solid #c62828;
+  text-align: left;
+  font-weight: 500;
+}
+
+/* Loading indicator */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 40px 0;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #5e21c7;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Results container */
+.result-container {
+  margin: 30px 0;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-container h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.result-box {
+  background-color: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.result-indicator {
+  font-size: 24px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.result-indicator.pneumonia {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.result-indicator.normal {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.confidence {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #666;
+}
+
+.result-description {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+  text-align: left;
+  padding: 10px 0;
+  border-top: 1px solid #eee;
+}
+
+.ai-analysis-details {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  text-align: left;
+}
+
+.ai-analysis-details h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.ai-analysis-details ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+.ai-analysis-details li {
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.disclaimer {
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #666;
+  border-left: 3px solid #5e21c7;
+}
+
+/* Upload box */
 .upload-box {
   border: 2px dashed #5e21c7;
   background-color: #f2f2f8;
@@ -40,14 +169,15 @@ body {
   max-width: 800px;
   margin: auto;
   transition: background 0.3s;
+  margin-bottom: 20px;
 }
 
 .upload-box:hover {
-  background-color: #c0c0ec;
+  background-color: #e8e8f5;
 }
 
 .upload-icon {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .upload-svg-icon {

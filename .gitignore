@@ -1,3 +1,14 @@
+# =================================================================
+# SCAN_AI COMPREHENSIVE GITIGNORE FILE
+# =================================================================
+
+# ------------------- Node.js -------------------
+# Dependency directories
+node_modules/
+*/node_modules/
+**/node_modules/
+jspm_packages/
+
 # Logs
 logs
 *.log
@@ -6,30 +17,139 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-/frontend/node_modules/
-node_modules/
-dist
-dist-ssr
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+out/
+.output/
+.nuxt/
+.cache/
+.parcel-cache/
+.rollup.cache/
 *.local
-# Ignore environment files
+
+# ------------------- Python -------------------
+# Virtual environment
+venv/
+*/venv/
+**/venv/
+env/
+*/env/
+**/env/
+.venv/
+.env/
+ENV/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+MANIFEST
+
+# ------------------- Environment files -------------------
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+**/.env
+**/.env.*
 backend/.env
-# Editor directories and files
+frontend/.env
+
+# ------------------- Editor directories and files -------------------
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+!.vscode/settings.json
+!.vscode/tasks.json
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-# Node
-node_modules/
-frontend/node_modules/
-frontend/.env
-# Build output
-dist/
-build/
-# Vite, CRA etc.
-.cache/
+.DS_Store
+Thumbs.db
+.project
+.classpath
+.settings/
 
+# ------------------- Application specific -------------------
+# Upload directories (but keep the folder)
+backend/model_api/uploads/*
+!backend/model_api/uploads/.gitkeep
+backend/model_api/results/*
+!backend/model_api/results/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Trained model files (too large for git) - Currently tracked in this repo
+# peumoniaModel.keras
+
+# Backup files
+*.backup
+*.bak
+*.old
+*.tmp
+
+# Debug files
+.coverage
+htmlcov/
+.pytest_cache/
+.hypothesis/
+coverage/
+
+# Local data files
+*.db
+*.sqlite
+*.sqlite3
+
+# ------------------- Temporary/backup files -------------------
+*.tmp
+*~
+*.bak
+*.swp
+*.orig
+.~*
+*#
+*.backup
+
+# ------------------- macOS -------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ------------------- Windows -------------------
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
