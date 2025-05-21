@@ -1,0 +1,189 @@
+/* SubscriptionPlans.css */
+.subscription-container {
+
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 3rem;
+}
+
+.plans-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.plan-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  width: 340px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+  color: #111827; /* Ensure text is black */
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.plan-card.premium {
+  border: 2px solid #0660B4;
+}
+
+.recommended-badge {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  background-color: #0660B4;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.plan-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.plan-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0660B4;
+  margin-bottom: 0.25rem;
+}
+
+.plan-audience {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.plan-price {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #111827; /* Ensure price is dark */
+}
+
+.plan-price .period {
+  font-size: 1rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.plan-features {
+  flex-grow: 1;
+  margin-bottom: 2rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #374151; /* Ensure text is dark */
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.icon.check {
+  color: #0660B4;
+}
+
+.icon.x {
+  color: #ef4444;
+}
+
+.plan-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.plan-button.basic {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.plan-button.basic:hover {
+  background-color: #d1d5db;
+}
+
+.plan-button.premium {
+  background-color: #0660B4;
+  color: white;
+}
+
+.plan-button.premium:hover {
+  background-color: #0550a0;
+}
+
+/* Compact view for Scan Page */
+.compact-subscription {
+  background-color: #f3f9ff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  border: 1px solid #cce4ff;
+}
+
+.compact-subscription .plans-container {
+  gap: 1rem;
+}
+
+.compact-subscription .plan-card {
+  padding: 1.5rem;
+  width: 300px;
+}
+
+.compact-subscription .section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.compact-subscription .section-subtitle {
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .plans-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .plan-card {
+    width: 100%;
+    max-width: 400px;
+  }
+}

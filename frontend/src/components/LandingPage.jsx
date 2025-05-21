@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import SubscriptionPlans from './SubscriptionPlans';
 import '../styles/LandingPage.css';
+import '../styles/SubscriptionSection.css';
 
 // Import images
 import robotDoctor from '../assets/RobotDoctor3.png';
@@ -76,6 +78,13 @@ const LandingPage = () => {
                             <p className="card-text">Connect with healthcare experts for diagnosis review.</p>
                         </div>
                     </div>
+                </div>
+            </section>
+            
+            {/* Subscription Plans Section */}
+            <section id="subscription-section">
+                <div className="container">
+                    <SubscriptionPlans />
                 </div>
             </section>
 

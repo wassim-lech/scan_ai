@@ -1,0 +1,125 @@
+/* src/styles/Notifications.css */
+.notifications-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+  max-width: 600px;
+}
+
+.notifications-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: var(--text-dark);
+}
+
+.notification-date-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notification-date {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin: 10px 0 5px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.notification-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: var(--white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.notification-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.notification-card.unread {
+  background-color: rgba(0, 112, 243, 0.05);
+  border-left: 3px solid var(--primary-color);
+}
+
+.notification-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--light-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.notification-icon i {
+  font-size: 16px;
+  color: var(--primary-color);
+}
+
+.notification-content {
+  flex-grow: 1;
+}
+
+.notification-message {
+  font-size: 14px;
+  color: var(--text-dark);
+  margin: 0 0 5px 0;
+  line-height: 1.4;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.notification-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+.notifications-loading,
+.notifications-error,
+.notifications-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-light);
+}
+
+.notifications-error {
+  color: var(--error-color);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .notifications-container {
+    margin: 10px;
+  }
+  
+  .notification-card {
+    padding: 12px;
+  }
+  
+  .notification-icon {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .notification-message {
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,199 @@
+/* PremiumSuccess.css */
+.premium-success-container {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+.success-card {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  padding: 2.5rem;
+  text-align: center;
+  position: relative;
+  color: #111827; /* Ensure text is black */
+}
+
+.premium-badge {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background-color: #FFC107;
+  color: #222;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.crown-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.crown-gradient {
+  background: linear-gradient(135deg, #69CAEF 0%, #4D9BD8 50%, #0660B4 100%);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.success-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #0660B4;
+  margin-bottom: 1rem;
+}
+
+.success-message {
+  font-size: 1.1rem;
+  color: #4B5563;
+  margin-bottom: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-color: #E5E7EB;
+  margin: 2rem 0;
+}
+
+.benefits-section {
+  margin-bottom: 2.5rem;
+}
+
+.benefits-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.benefits-title::after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 100%;
+  background-color: #0660B4;
+  border-radius: 2px;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.benefit-card {
+  background-color: #F9FAFB;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: left;
+  color: #111827; /* Ensure text is black */
+}
+
+.benefit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.benefit-icon.blue {
+  background-color: #0660B4;
+}
+
+.benefit-icon.orange {
+  background-color: #F59E0B;
+}
+
+.benefit-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.benefit-description {
+  font-size: 0.9rem;
+  color: #6B7280;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.action-button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.action-button.primary {
+  background-color: #0660B4;
+  color: white;
+}
+
+.action-button.primary:hover {
+  background-color: #0550a0;
+}
+
+.action-button.secondary {
+  background-color: #F3F4F6;
+  color: #111827;
+}
+
+.action-button.secondary:hover {
+  background-color: #E5E7EB;
+}
+
+.redirect-notice {
+  font-size: 0.9rem;
+  color: #6B7280;
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .success-card {
+    padding: 2rem 1.5rem;
+  }
+}

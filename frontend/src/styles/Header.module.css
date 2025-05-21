@@ -176,11 +176,18 @@
 }
 
 .sidebarItem i {
+  color:white;
   margin-right: 12px;
   min-width: 20px;
 }
 
 .sidebarItem span {
+  color: white;
+  flex-grow: 1;
+  text-align: left;
+}
+ .badge {
+  color: black;
   flex-grow: 1;
   text-align: left;
 }
@@ -189,10 +196,7 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.sidebarItemActive {
-  background-color: white;
-  color: #0F2FFF;
-}
+
 
 .sidebarOverlay {
   position: fixed;

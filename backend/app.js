@@ -29,6 +29,17 @@ app.get('/api/test', (req, res) => {
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/admin', require('./routes/admin'));
+app.use('/api/admin-database', require('./routes/admin-database'));
+app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/appointments', require('./routes/appointments'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/help', require('./routes/help'));
+app.use('/api/scans', require('./routes/scan'));
+
+// Serve uploaded files as static files
+const path = require('path');
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 // Add other routes as needed
 
 // MongoDB connection

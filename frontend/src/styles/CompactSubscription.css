@@ -1,0 +1,108 @@
+.compact-subscription {
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  color: #111827; /* Ensure text is black */
+}
+
+.compact-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.compact-message {
+  flex: 1;
+}
+
+.compact-message h4 {
+  font-size: 1rem;
+  margin: 0 0 4px 0;
+  color: #111827;
+}
+
+.compact-message p {
+  font-size: 0.85rem;
+  margin: 0;
+  color: #6B7280;
+}
+
+.upgrade-button {
+  background-color: #0660B4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.upgrade-button:hover {
+  background-color: #0550a0;
+}
+
+.compact-features {
+  display: flex;
+  gap: 16px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #374151;
+}
+
+.check-icon {
+  color: #10B981;
+}
+
+/* Premium active styles */
+.premium-active {
+  background-color: rgba(6, 96, 180, 0.1);
+  border: 1px solid rgba(6, 96, 180, 0.2);
+}
+
+.compact-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.premium-badge {
+  background-color: #0660B4;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.scans-info {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.scans-count {
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .compact-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .compact-features {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

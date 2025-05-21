@@ -1,0 +1,300 @@
+/* Modern appointment form styling that matches the screenshot */
+
+/* Form container */
+.appointment-container {
+  color: #111827 !important;
+  background-color: white !important;
+  max-width: 900px !important;
+  margin: 0 auto !important;
+  padding: 2rem !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Progress steps */
+.appointment-steps {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-bottom: 2rem !important;
+  position: relative !important;
+  max-width: 600px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.appointment-steps::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 2px !important;
+  background: #e5e7eb !important;
+  z-index: 1 !important;
+}
+
+.step {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.step-circle {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: bold !important;
+  color: #6b7280 !important;
+  margin-bottom: 8px !important;
+  background-color: white !important;
+  border: 2px solid #e5e7eb !important;
+}
+
+.step.active .step-circle {
+  background-color: #0cc0df !important;
+  border-color: #0cc0df !important;
+  color: white !important;
+}
+
+.step.completed .step-circle {
+  background-color: #10b981 !important;
+  border-color: #10b981 !important;
+  color: white !important;
+}
+
+.step-label {
+  font-size: 14px !important;
+  color: #6b7280 !important;
+}
+
+.step.active .step-label {
+  color: #111827 !important;
+  font-weight: 500 !important;
+}
+
+/* Form structure */
+.form-content {
+  margin-top: 2rem !important;
+}
+
+.form-section {
+  margin-bottom: 2rem !important;
+}
+
+.form-section h2.personal-info-title {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 1.5rem !important;
+  color: #111827 !important;
+}
+
+.form-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.form-group {
+  margin-bottom: 1.25rem !important;
+}
+
+/* Form inputs */
+.form-group label {
+  display: block !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.5rem !important;
+  color: #111827 !important;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100% !important;
+  padding: 0.75rem 1rem !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.375rem !important;
+  font-size: 1rem !important;
+  color: #111827 !important;
+  background-color: white !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #0cc0df !important;
+  box-shadow: 0 0 0 3px rgba(12, 192, 223, 0.2) !important;
+  outline: none !important;
+}
+
+.form-group input::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Error states */
+.form-group .error-message {
+  font-size: 0.75rem !important;
+  color: #ef4444 !important;
+  margin-top: 0.25rem !important;
+}
+
+.form-group input.error,
+.form-group select.error {
+  border-color: #ef4444 !important;
+}
+
+/* Navigation buttons */
+.form-navigation {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-top: 2rem !important;
+}
+
+.btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 500 !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  border: none !important;
+}
+
+.btn.btn-primary {
+  background-color: #0660B4 !important;
+  color: white !important;
+  border: 2px solid #0660B4 !important;
+}
+
+.btn.btn-outline {
+  background-color: white !important;
+  border: 2px solid #0660B4 !important;
+  color: #0660B4 !important;
+}
+
+.btn.btn-primary:hover {
+  background-color: #0550a0 !important;
+}
+
+.btn.btn-outline:hover {
+  background-color: #f0f9ff !important;
+}
+
+/* Confirm booking button */
+.confirm-booking-btn {
+  background-color: white !important;
+  color: #0660B4 !important;
+  border: 2px solid #0660B4 !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-top: 1.5rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.confirm-booking-btn:hover {
+  background-color: #f0f9ff !important;
+}
+
+/* Time slots */
+.time-slots-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.25rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.time-slot {
+  padding: 0.5rem 0.75rem !important;
+  text-align: center !important;
+  border: 2px solid #0660B4 !important;
+  border-radius: 4px !important;
+  color: #111827 !important;
+  background-color: white !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+  min-width: 85px !important;
+  margin-right: 4px !important;
+  margin-bottom: 4px !important;
+  font-size: 0.875rem !important;
+}
+
+.time-slot:hover:not(.disabled) {
+  background-color: #f0f9ff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.time-slot.selected {
+  background-color: #0660B4 !important;
+  border-color: #0660B4 !important;
+  color: white !important;
+}
+
+.time-slot.disabled {
+  background-color: #F3F4F6 !important;
+  color: #9CA3AF !important;
+  cursor: not-allowed !important;
+  border-color: #E5E7EB !important;
+}
+
+/* Confirmation styles */
+.confirmation-details {
+  background-color: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.5rem !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.confirmation-group {
+  display: flex !important;
+  margin-bottom: 1rem !important;
+  padding-bottom: 0.75rem !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.confirmation-group:last-child {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
+}
+
+.confirmation-label {
+  flex: 0 0 30% !important;
+  color: #6b7280 !important;
+  font-size: 0.875rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.confirmation-label .icon {
+  color: #0660B4 !important;
+}
+
+.confirmation-value {
+  flex: 1 !important;
+  color: #111827 !important;
+  font-weight: 500 !important;
+}
+
+/* Select date message */
+.form-group p {
+  color: #6b7280 !important;
+  font-size: 0.875rem !important;
+  margin-top: 0.5rem !important;
+}

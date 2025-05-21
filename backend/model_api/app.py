@@ -19,7 +19,8 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 # Configuration
 UPLOAD_FOLDER = 'uploads'
 RESULTS_FOLDER = 'results'
-MODEL_PATH = '../../peumoniaModel.keras'  # Path from model_api to the root directory model
+# Use absolute path for more reliable model loading
+MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../Binary6.keras'))
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
 DEBUG = True  # Enable debug logging
 
@@ -65,12 +66,17 @@ try:
         print(f"ERROR: Model file not found at {MODEL_PATH}")
         print(f"Current working directory: {os.getcwd()}")
         print(f"Checking parent directory: {os.path.exists('../..')}")
+        print(f"Absolute MODEL_PATH resolves to: {os.path.abspath(MODEL_PATH)}")
+        print(f"Binary6.keras exists in root directory: {os.path.exists('../../Binary6.keras')}")
         model = None
     else:
+        print(f"Model file found, size: {os.path.getsize(MODEL_PATH) / (1024*1024):.2f} MB")
         model = tf.keras.models.load_model(MODEL_PATH)
         print("Model loaded successfully!")
-        # Print model summary
+        # Print model summary and architecture info
         model.summary()
+        print(f"Model input shape: {model.input_shape}")
+        print(f"Model output shape: {model.output_shape}")
 except Exception as e:
     print(f"Error loading model: {str(e)}")
     model = None

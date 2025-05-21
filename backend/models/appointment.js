@@ -7,9 +7,12 @@ const AppointmentSchema = new mongoose.Schema({
   time: { type: String, required: true }, // e.g., "14:00"
   status: { 
     type: String, 
-    enum: ['pending', 'confirmed', 'cancelled'], 
+    enum: ['pending', 'confirmed', 'cancelled', 'completed'], 
     default: 'pending' 
   },
+  reason: { type: String }, // Reason for the appointment
+  scanId: { type: mongoose.Schema.Types.ObjectId, ref: 'Scan' }, // Reference to scan result
+  notes: { type: String }, // Doctor's notes
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -1,0 +1,245 @@
+/* Database Manager Styles */
+.database-manager {
+  width: 100%;
+  height: calc(100vh - 120px);
+  overflow: hidden;
+}
+
+.database-manager h1 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  position: relative;
+  color: #7f8c8d;
+}
+
+.tab-btn.active {
+  color: #3498db;
+  font-weight: 600;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #3498db;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.content-area {
+  display: flex;
+  height: calc(100vh - 200px);
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.list-panel {
+  width: 40%;
+  border-right: 1px solid #e1e1e1;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+}
+
+.detail-panel {
+  width: 60%;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.list-panel h2,
+.detail-panel h2 {
+  margin: 0;
+  padding: 15px;
+  background-color: #f1f1f1;
+  border-bottom: 1px solid #e1e1e1;
+  font-size: 1.2rem;
+}
+
+.item-list {
+  padding: 10px;
+}
+
+.list-item {
+  padding: 15px;
+  border-bottom: 1px solid #e1e1e1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.list-item:hover {
+  background-color: #f1f1f1;
+}
+
+.list-item.active {
+  background-color: #e1f5fe;
+  border-left: 4px solid #3498db;
+}
+
+.item-name {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.item-detail {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.no-selection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.edit-form {
+  padding: 15px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.update-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.update-btn:hover {
+  background-color: #2980b9;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+}
+
+.scan-list {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+.scan-item {
+  margin-top: 5px;
+  padding: 8px;
+  background-color: #f8f9fa;
+  border-radius: 3px;
+  border-left: 3px solid #ddd;
+}
+
+.scan-item.active {
+  background-color: #e1f5fe;
+  border-left: 3px solid #3498db;
+}
+
+.scan-image {
+  width: 100%;
+  max-height: 300px;
+  overflow: hidden;
+  margin: 10px 0;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.scan-image img {
+  max-width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+}
+
+.unauthorized {
+  text-align: center;
+  padding: 50px;
+}
+
+.unauthorized h2 {
+  color: #e74c3c;
+}
+
+.user-management,
+.appointment-management,
+.scan-management {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content-area,
+  .user-management,
+  .appointment-management,
+  .scan-management {
+    flex-direction: column;
+  }
+  
+  .list-panel,
+  .detail-panel {
+    width: 100%;
+    height: 50%;
+  }
+  
+  .list-panel {
+    border-right: none;
+    border-bottom: 1px solid #e1e1e1;
+  }
+}

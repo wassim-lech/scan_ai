@@ -79,7 +79,7 @@ router.get('/users/:id', [auth, roleCheck(['admin'])], async (req, res) => {
 // Update user (admin only)
 router.put('/users/:id', [auth, roleCheck(['admin'])], async (req, res) => {
   try {
-    const { username, email, role, scansRemaining } = req.body;
+    const { username, email, role, scansRemaining, first_name, last_name, phone, address } = req.body;
     
     // Build user object
     const userFields = {};
@@ -87,6 +87,10 @@ router.put('/users/:id', [auth, roleCheck(['admin'])], async (req, res) => {
     if (email) userFields.email = email;
     if (role) userFields.role = role;
     if (scansRemaining !== undefined) userFields.scansRemaining = scansRemaining;
+    if (first_name) userFields.first_name = first_name;
+    if (last_name) userFields.last_name = last_name;
+    if (phone) userFields.phone = phone;
+    if (address) userFields.address = address;
     
     // Update user
     const user = await User.findByIdAndUpdate(
@@ -126,12 +130,61 @@ router.delete('/users/:id', [auth, roleCheck(['admin'])], async (req, res) => {
 
 router.get('/appointments', [auth, roleCheck(['admin'])], async (req, res) => {
   try {
-    const appointments = await Appointment.find();
+    const appointments = await Appointment.find().populate('userId', 'username first_name last_name email');
     res.json(appointments);
   } catch (err) {
     console.error('Error retrieving appointments:', err);
     res.status(500).json({ msg: 'Server error', details: err.message });
   }
+});
+
+// Update appointment status (admin only)
+router.put('/appointments/:id', [auth, roleCheck(['admin'])], async (req, res) => {
+  try {
+    const { status, doctor, date, time, notification } = req.body;
+    
+    let appointment = await Appointment.findById(req.params.id);
+    
+    if (!appointment) {
+      return res.status(404).json({ msg: 'Appointment not found' });
+    }
+    
+    // Update appointment fields
+    if (status) appointment.status = status;
+    if (doctor) appointment.doctor = doctor;
+    if (date) appointment.date = date;
+    if (time) appointment.time = time;
+    
+    await appointment.save();
+    
+    // Send notification if provided
+    if (notification) {
+      const user = await User.findById(appointment.userId);
+      
+      if (user) {
+        user.notifications.unshift({
+          type: notification.type,
+          message: notification.message,
+          status: 'unread',
+          data: {
+            appointmentId: appointment._id,
+            status: appointment.status,
+            date: appointment.date,
+            time: appointment.time
+          },
+          createdAt: Date.now()
+        });
+        
+        await user.save();
+      }
+    }
+    
+    res.json({ msg: 'Appointment updated', appointment });
+  } catch (err) {
+    console.error('Error updating appointment:', err);
+    res.status(500).json({ msg: 'Server error', details: err.message });
+  }
+});
 });
 
 module.exports = router;

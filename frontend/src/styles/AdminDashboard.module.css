@@ -17,7 +17,7 @@
   width: 250px;
   background-color: #1a202c;
   color: var(--white);
-  padding: 20px;
+  padding: 2.5em;
   position: fixed;
   height: 100%;
   overflow-y: auto;
@@ -28,9 +28,10 @@
 .sidebar .logo {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 30px;
+  margin-bottom: 4em;
   color: var(--white);
   text-align: center;
+  padding-bottom: 5em;
 }
 
 .navLinks {
@@ -113,8 +114,8 @@
 }
 
 .searchBar {
-  flex: 1;
-  margin: 0 20px;
+  position: fixed ;
+  top: 0%;
 }
 
 .searchBar input {

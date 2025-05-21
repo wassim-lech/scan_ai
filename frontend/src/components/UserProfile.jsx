@@ -1,15 +1,41 @@
-import React, { useState, useContext, useEffect } from 'react';
-import  AuthContext  from '../context/AuthContext';
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthContext, { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import api from '../utils/api';
 import '../styles/UserProfile.css';
-const UserProfile = () => {
+
+const UserProfile = () => {  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
+  const fileInputRef = useRef(null);
+  const [profileImage, setProfileImage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user, refreshUser } = useAuth();
+  const toast = useToast();
   const [userInfo, setUserInfo] = useState({
-    name: 'John Doe',
-    email: 'doe.doe.doe@example.com',
+    firstName: user?.first_name || '',
+    lastName: user?.last_name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    address: user?.address || '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
+  
+  // Update userInfo when user data changes
+  useEffect(() => {
+    if (user) {
+      setUserInfo(prev => ({
+        ...prev,
+        firstName: user.first_name || '',
+        lastName: user.last_name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        address: user.address || ''
+      }));
+    }
+  }, [user]);
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -19,10 +45,97 @@ const UserProfile = () => {
     });
   };
   
-  const handleSubmit = (e) => {
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const triggerFileInput = () => {
+    fileInputRef.current.click();
+  };
+
+  // Get user's initials for avatar placeholder
+  const getUserInitials = () => {
+    return userInfo.firstName.charAt(0) + (userInfo.lastName ? userInfo.lastName.charAt(0) : '');
+  };  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would handle the form submission
-    alert('Profile information updated!');
+    
+    // Validate form fields
+    const phoneRegex = /^\+?[0-9]{10,15}$/;
+    
+    if (userInfo.phone && !phoneRegex.test(userInfo.phone)) {
+      toast.error('Please enter a valid phone number');
+      return;
+    }
+    
+    if (userInfo.address && userInfo.address.length > 200) {
+      toast.error('Address must be less than 200 characters');
+      return;
+    }
+    
+    if (userInfo.newPassword && !userInfo.currentPassword) {
+      toast.error('Current password is required to set a new password');
+      return;
+    }
+    if (userInfo.newPassword && userInfo.newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters long');
+      return;
+    }
+    
+    if (userInfo.newPassword && userInfo.newPassword !== userInfo.confirmPassword) {
+      toast.error('New password and confirm password do not match');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Make API call to update user profile using the API utility
+      const response = await api.put('/auth/profile', {
+        first_name: userInfo.firstName,
+        last_name: userInfo.lastName,
+        phone: userInfo.phone,
+        address: userInfo.address,
+        // Only include password fields if user is trying to change password
+        ...(userInfo.currentPassword && {
+          current_password: userInfo.currentPassword,
+          new_password: userInfo.newPassword
+        })
+      });
+        if (response.status === 200) {
+        toast.success('Profile information updated successfully!');
+        
+        // Refresh user data in context
+        await refreshUser();
+        
+        // Clear password fields
+        setUserInfo({
+          ...userInfo,
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+      } else {
+        toast.error(`Failed to update profile: ${response.data?.msg || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('An error occurred while updating your profile.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const { logout } = useAuth();
+  
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   // Mock data for appointments
@@ -41,7 +154,7 @@ const UserProfile = () => {
   ];
 
   return (
-    <div className="user-profile-container">
+    <div className="user-profile-container">      
       <div className="profile-header">
         <div className="header-content">
           <div className="search-bar">
@@ -52,12 +165,14 @@ const UserProfile = () => {
               <i className="fas fa-bell"></i>
             </div>
             <div className="user-info">
-              <span>{userInfo.name}</span>
+              <span>{userInfo.firstName} {userInfo.lastName}</span>
               <i className="fas fa-chevron-down"></i>
             </div>
           </div>
         </div>
+      </div>
         
+      <div className="profile-tabs-container">
         <div className="profile-tabs">
           <button 
             className={`tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
@@ -77,9 +192,6 @@ const UserProfile = () => {
           >
             <i className="fas fa-x-ray"></i> Scan History
           </button>
-          <button className="logout-btn">
-            <i className="fas fa-sign-out-alt"></i> Logout
-          </button>
         </div>
       </div>
 
@@ -90,10 +202,16 @@ const UserProfile = () => {
               <div className="section-content">
                 <div className="avatar-container">
                   <div className="avatar">
-                    <img src="https://via.placeholder.com/150" alt="User avatar" />
+                    {profileImage ? (
+                      <img src={profileImage} alt="User avatar" />
+                    ) : (
+                      <div className="avatar-placeholder">
+                        {getUserInitials()}
+                      </div>
+                    )}
                   </div>
                   <div className="avatar-info">
-                    <h2>Howdy, {userInfo.name}!</h2>
+                    <h2>Howdy, {userInfo.firstName}!</h2>
                     <p>Last login <strong>12 mins ago</strong> from <strong>127.0.0.1</strong></p>
                     <span className="verified-badge">
                       <i className="fas fa-check-circle"></i> Verified
@@ -102,9 +220,16 @@ const UserProfile = () => {
                 </div>
                 <div className="avatar-upload">
                   <h3>Avatar</h3>
-                  <button className="upload-btn">
+                  <button className="upload-btn" onClick={triggerFileInput}>
                     <i className="fas fa-upload"></i> Upload
                   </button>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleImageUpload} 
+                    style={{ display: 'none' }} 
+                    accept="image/*"
+                  />
                   <p className="upload-info">Max 500kb</p>
                 </div>
               </div>
@@ -112,85 +237,148 @@ const UserProfile = () => {
             <div className="profile-section">
               <h3>Personal Information</h3>
               <form onSubmit={handleSubmit}>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="firstName">First Name</label>
+                    <div className="input-with-icon">
+                      <i className="fas fa-user input-icon"></i>
+                      <input 
+                        type="text" 
+                        id="firstName" 
+                        name="firstName" 
+                        value={userInfo.firstName} 
+                        onChange={handleInputChange} 
+                        required 
+                      />
+                    </div>
+                    <p className="input-help">Required. Your first name</p>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="lastName">Last Name</label>
+                    <div className="input-with-icon">
+                      <i className="fas fa-user input-icon"></i>
+                      <input 
+                        type="text" 
+                        id="lastName" 
+                        name="lastName" 
+                        value={userInfo.lastName} 
+                        onChange={handleInputChange} 
+                        required 
+                      />
+                    </div>
+                    <p className="input-help">Required. Your last name</p>
+                  </div>
+                </div>
+                  <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="email">E-mail</label>
+                    <div className="input-with-icon">
+                      <i className="fas fa-envelope input-icon"></i>
+                      <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        value={userInfo.email} 
+                        onChange={handleInputChange} 
+                        required 
+                      />
+                    </div>
+                    <p className="input-help">Required. Your e-mail</p>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="phone">Phone Number</label>
+                    <div className="input-with-icon">
+                      <i className="fas fa-phone input-icon"></i>
+                      <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        value={userInfo.phone} 
+                        onChange={handleInputChange} 
+                      />
+                    </div>
+                    <p className="input-help">Optional. Your phone number</p>
+                  </div>
+                </div>
+                
                 <div className="form-group">
-                  <label htmlFor="name">Name</label>
+                  <label htmlFor="address">Address</label>
                   <div className="input-with-icon">
-                    <i className="fas fa-user input-icon"></i>
+                    <i className="fas fa-map-marker-alt input-icon"></i>
                     <input 
                       type="text" 
-                      id="name" 
-                      name="name" 
-                      value={userInfo.name} 
-                      onChange={handleInputChange} 
-                      required 
+                      id="address" 
+                      name="address" 
+                      value={userInfo.address} 
+                      onChange={handleInputChange}
                     />
                   </div>
-                  <p className="input-help">Required. Your name</p>
+                  <p className="input-help">Optional. Your address</p>
                 </div>
-                
-                <div className="form-group">
-                  <label htmlFor="email">E-mail</label>
-                  <div className="input-with-icon">
-                    <i className="fas fa-envelope input-icon"></i>
-                    <input 
-                      type="email" 
-                      id="email" 
-                      name="email" 
-                      value={userInfo.email} 
-                      onChange={handleInputChange} 
-                      required 
-                    />
+              
+                <div className="password-section">
+                  <h3>Password Management</h3>
+                  
+                  <div className="form-group">
+                    <label htmlFor="currentPassword">Current password</label>
+                    <div className="input-with-icon">
+                      <i className="fas fa-lock input-icon"></i>
+                      <input 
+                        type="password" 
+                        id="currentPassword" 
+                        name="currentPassword" 
+                        value={userInfo.currentPassword} 
+                        onChange={handleInputChange} 
+                      />
+                    </div>
+                    <p className="input-help">Required to change password</p>
                   </div>
-                  <p className="input-help">Required. Your e-mail</p>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="currentPassword">Current password</label>
-                  <div className="input-with-icon">
-                    <i className="fas fa-lock input-icon"></i>
-                    <input 
-                      type="password" 
-                      id="currentPassword" 
-                      name="currentPassword" 
-                      value={userInfo.currentPassword} 
-                      onChange={handleInputChange} 
-                    />
-                  </div>
-                  <p className="input-help">Required. Your current password</p>
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="newPassword">New password</label>
-                  <div className="input-with-icon">
-                    <i className="fas fa-lock input-icon"></i>
-                    <input 
-                      type="password" 
-                      id="newPassword" 
-                      name="newPassword" 
-                      value={userInfo.newPassword} 
-                      onChange={handleInputChange} 
-                    />
-                  </div>
-                  <p className="input-help">Required. New password</p>
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="confirmPassword">Confirm password</label>
-                  <div className="input-with-icon">
-                    <i className="fas fa-lock input-icon"></i>
-                    <input 
-                      type="password" 
-                      id="confirmPassword" 
-                      name="confirmPassword" 
-                      value={userInfo.confirmPassword} 
-                      onChange={handleInputChange} 
-                    />
-                  </div>
-                  <p className="input-help">Required. New password one more time</p>
-                </div>
+                  
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="newPassword">New password</label>
+                      <div className="input-with-icon">
+                        <i className="fas fa-lock input-icon"></i>
+                        <input 
+                          type="password" 
+                          id="newPassword" 
+                          name="newPassword" 
+                          value={userInfo.newPassword} 
+                          onChange={handleInputChange} 
+                        />
+                      </div>
+                      <p className="input-help">Leave blank if not changing</p>
+                    </div>
+                    
+                    <div className="form-group">
+                      <label htmlFor="confirmPassword">Confirm password</label>
+                      <div className="input-with-icon">
+                        <i className="fas fa-lock input-icon"></i>
+                        <input 
+                          type="password" 
+                          id="confirmPassword" 
+                          name="confirmPassword" 
+                          value={userInfo.confirmPassword} 
+                          onChange={handleInputChange} 
+                        />
+                      </div>
+                      <p className="input-help">Must match new password</p>
+                    </div>
+                  </div>                </div>
                 
                 <div className="form-actions">
-                  <button type="submit" className="save-btn">Save Changes</button>
+                  <button type="submit" className="save-btn" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <span className="loading-spinner"></span>
+                    ) : (
+                      'Save Changes'
+                    )}
+                  </button>
+                  <button type="button" className="logout-btn" onClick={handleLogout}>
+                    <i className="fas fa-sign-out-alt"></i> Logout
+                  </button>
                 </div>
               </form>
             </div>

@@ -1,0 +1,17 @@
+/* Add these styles to your LandingPage.css file */
+.subscription-section {
+  padding: 60px 0;
+  background-color: #f9fafb;
+}
+
+.subscription-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+  .subscription-section {
+    padding: 40px 0;
+  }
+}

@@ -1,0 +1,41 @@
+# MongoDB commands to update user data
+
+# 1. Find a user by email
+db.users.findOne({ email: "user@example.com" })
+
+# 2. Find a user by username
+db.users.findOne({ username: "username123" })
+
+# 3. Update a user's first name and last name by email
+db.users.updateOne(
+  { email: "user@example.com" },
+  { $set: { first_name: "New First Name", last_name: "New Last Name" } }
+)
+
+# 4. Update a user's phone and address by username
+db.users.updateOne(
+  { username: "username123" },
+  { $set: { phone: "+12345678901", address: "123 New Address, City, State 12345" } }
+)
+
+# 5. Update multiple fields at once by user ID
+db.users.updateOne(
+  { _id: ObjectId("user_id_here") },
+  { 
+    $set: { 
+      first_name: "New First Name",
+      last_name: "New Last Name",
+      phone: "+12345678901",
+      address: "123 New Address, City, State 12345"
+    } 
+  }
+)
+
+# 6. Find all users with empty first name or last name
+db.users.find({ $or: [{ first_name: "" }, { last_name: "" }] })
+
+# 7. Update all users who have empty first_name
+db.users.updateMany(
+  { first_name: "" },
+  { $set: { first_name: "Default" } }
+)

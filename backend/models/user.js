@@ -8,10 +8,34 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  first_name: {
+    type: String,
+    default: ''
+  },
+  last_name: {
+    type: String,
+    default: ''
+  },
   email: {
     type: String,
     required: true,
     unique: true
+  },  phone: {
+    type: String,
+    default: '',
+    validate: {
+      validator: function(v) {
+        // Allow empty string or validate phone format
+        return v === '' || /^\+?[0-9]{10,15}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid phone number!`
+    }
+  },
+  address: {
+    type: String,
+    default: '',
+    trim: true,
+    maxlength: [200, 'Address cannot be more than 200 characters']
   },
   password: {
     type: String,
@@ -25,9 +49,34 @@ const UserSchema = new mongoose.Schema({
   scansRemaining: {
     type: Number,
     default: 1
-  },
-  scanHistory: {
+  },  scanHistory: {
     type: Array,
+    default: []
+  },
+  notifications: {
+    type: [{
+      type: {
+        type: String,
+        enum: ['appointment', 'scan', 'system'],
+        required: true
+      },
+      message: {
+        type: String,
+        required: true
+      },
+      status: {
+        type: String,
+        enum: ['unread', 'read'],
+        default: 'unread'
+      },
+      data: {
+        type: mongoose.Schema.Types.Mixed
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
     default: []
   },
   createdAt: {

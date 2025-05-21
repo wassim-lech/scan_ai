@@ -1,0 +1,191 @@
+/* Enhanced styles for the appointment form to ensure visibility */
+
+/* Form container */
+.appointment-container {
+  color: #111827 !important;
+  background-color: white !important;
+  max-width: 900px !important;
+  margin: 0 auto !important;
+  padding: 2rem !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Progress steps */
+.appointment-steps {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-bottom: 2rem !important;
+  position: relative !important;
+  max-width: 600px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.appointment-steps::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 2px !important;
+  background: #e5e7eb !important;
+  z-index: 1 !important;
+}
+
+.step {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.step-circle {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background-color: white !important;
+  border: 2px solid #e5e7eb !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: bold !important;
+  color: #6b7280 !important;
+  margin-bottom: 8px !important;
+}
+
+.step.active .step-circle {
+  background-color: #0cc0df !important;
+  border-color: #0cc0df !important;
+  color: white !important;
+}
+
+.step.completed .step-circle {
+  background-color: #10b981 !important;
+  border-color: #10b981 !important;
+  color: white !important;
+}
+
+.step-label {
+  font-size: 14px !important;
+  color: #6b7280 !important;
+}
+
+.step.active .step-label {
+  color: #111827 !important;
+  font-weight: 500 !important;
+}
+
+/* Form inputs */
+.appointment-container input,
+.appointment-container select,
+.appointment-container textarea {
+  color: #111827 !important;
+  background-color: white !important;
+  border: 1px solid #d1d5db !important;
+  width: 100% !important;
+  padding: 0.75rem !important;
+  border-radius: 6px !important;
+  font-size: 1rem !important;
+}
+
+/* Form labels */
+.appointment-container label,
+.appointment-container .form-label {
+  color: #111827 !important;
+}
+
+/* Section headings */
+.appointment-container h1,
+.appointment-container h2,
+.appointment-container h3,
+.appointment-container h4 {
+  color: #111827 !important;
+}
+
+/* Date input specific styling */
+.appointment-container input[type="date"] {
+  color: #111827 !important;
+  background-color: white !important;
+}
+
+/* Time slots styling */
+.appointment-container .time-slot,
+.appointment-container [class*="rounded-lg"][class*="border"] {
+  background-color: white !important;
+  color: #111827 !important;
+  border: 2px solid #0660B4 !important;
+  border-radius: 4px !important;
+  margin-right: 4px !important;
+  margin-bottom: 4px !important;
+  min-width: 85px !important;
+  text-align: center !important;
+}
+
+.appointment-container .time-slot.selected {
+  background-color: #0660B4 !important;
+  color: white !important;
+  border-color: #0660B4 !important;
+}
+
+/* Confirm booking button */
+.appointment-container .btn-primary,
+.appointment-container button[type="submit"],
+.appointment-container button:has(svg.check) {
+  background-color: white !important;
+  color: #0660B4 !important;
+  border: 2px solid #0660B4 !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1.5rem !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.appointment-container .btn-primary:hover,
+.appointment-container button[type="submit"]:hover {
+  background-color: #f0f9ff !important;
+}
+
+/* Confirmation box */
+.appointment-container .confirmation-box {
+  background-color: #F9FAFB !important;
+  color: #111827 !important;
+  border: 1px solid #E5E7EB !important;
+}
+
+/* Info labels and values */
+.appointment-container .info-label {
+  color: #374151 !important;
+}
+
+.appointment-container .info-value {
+  color: #111827 !important;
+}
+
+/* Buttons */
+.appointment-container .btn {
+  color: #111827 !important;
+}
+
+.appointment-container .btn-primary {
+  background-color: #0660B4 !important;
+  color: white !important;
+}
+
+.appointment-container .btn-outline {
+  background-color: transparent !important;
+  border: 1px solid #D1D5DB !important;
+  color: #4B5563 !important;
+}
+
+/* Icon styling */
+.appointment-container .text-gray-500 {
+  color: #0660B4 !important;
+}
+
+/* Force light theme */
+.appointment-container * {
+  --text-color: #111827 !important;
+}

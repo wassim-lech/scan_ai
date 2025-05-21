@@ -54,20 +54,89 @@ router.get('/slots', auth, async (req, res) => {
 });
 
 router.post('/book', [auth, roleCheck(['free', 'premium'])], async (req, res) => {
-  const { date, time, doctorId } = req.body;
+  const { date, time, doctorId, reason } = req.body;
   try {
     const existing = await Appointment.findOne({ date, time });
     if (existing) return res.status(400).json({ msg: 'Slot already booked' });
+    
+    const user = req.user;
     const appointment = new Appointment({
-      userId: req.user.id,
+      userId: user.id,
       date,
       time,
-      doctorId: user.role === 'premium' ? doctorId : null,
+      doctor: doctorId,
+      reason: reason || 'Regular checkup'
     });
+    
     await appointment.save();
     res.status(201).json({ msg: 'Appointment booked', appointment });
   } catch (err) {
+    console.error('Error booking appointment:', err);
     res.status(500).json({ msg: 'Server error' });
   }
 });
+
+// View doctor's patients (for doctors)
+router.get('/doctor/patients', [auth, roleCheck(['doctor'])], async (req, res) => {
+  try {
+    // Find all appointments for this doctor
+    const doctorAppointments = await Appointment.find({ doctor: req.user.username })
+      .populate('userId', 'name email phone');
+    
+    // Extract unique patients
+    const uniquePatients = {};
+    doctorAppointments.forEach(appointment => {
+      if (appointment.userId && typeof appointment.userId === 'object') {
+        const patientId = appointment.userId._id.toString();
+        if (!uniquePatients[patientId]) {
+          uniquePatients[patientId] = {
+            _id: patientId,
+            name: appointment.userId.name,
+            email: appointment.userId.email,
+            phone: appointment.userId.phone,
+            lastVisit: appointment.date
+          };
+        } else if (new Date(appointment.date) > new Date(uniquePatients[patientId].lastVisit)) {
+          // Update last visit date if this appointment is more recent
+          uniquePatients[patientId].lastVisit = appointment.date;
+        }
+      }
+    });
+    
+    res.json(Object.values(uniquePatients));
+  } catch (err) {
+    console.error('Error fetching doctor patients:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// View patient scan results (for doctors)
+router.get('/doctor/scan-results', [auth, roleCheck(['doctor'])], async (req, res) => {
+  try {
+    // Find all appointments for this doctor
+    const doctorAppointments = await Appointment.find({ doctor: req.user.username })
+      .populate('userId', 'name')
+      .populate('scanId');
+    
+    // Extract scan results
+    const scanResults = doctorAppointments
+      .filter(appointment => appointment.scanId)
+      .map(appointment => {
+        return {
+          _id: appointment.scanId._id,
+          patientName: appointment.userId?.name || 'Unknown Patient',
+          scanDate: appointment.scanId.createdAt || appointment.date,
+          scanType: appointment.scanId.type || 'X-Ray',
+          diagnosis: appointment.scanId.result,
+          confidence: appointment.scanId.confidence
+        };
+      });
+    
+    res.json(scanResults);
+  } catch (err) {
+    console.error('Error fetching scan results:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
   module.exports = router;
