@@ -54,13 +54,14 @@ router.post('/upload', [auth, roleCheck(['free', 'premium', 'doctor', 'admin']),
       }
         // Get prediction from model API service
       const predictionResult = await modelApiService.getPrediction(req.file.path);
-      
-      // Update user document
+        // Update user document
       const user = await User.findById(req.user.id);
       
       // Only decrement scans for regular users
       if (req.user.role !== 'doctor' && req.user.role !== 'admin') {
-        user.scansRemaining -= 1;
+        if (user.scansRemaining > 0) {
+          user.scansRemaining -= 1;
+        }
       }
       
       // Add scan to history
@@ -121,11 +122,45 @@ router.get('/details/:id', auth, async (req, res) => {
     if (!scan) {
       return res.status(404).json({ msg: 'Scan not found' });
     }
-    
-    res.json(scan);
+      res.json(scan);
   } catch (err) {
     console.error('Error fetching scan details:', err);
     res.status(500).json({ msg: 'Server error', details: err.message });
   }
 });
+
+// New route to directly serve scan images by filename
+router.get('/image/:filename', async (req, res) => {
+  try {
+    const { filename } = req.params;
+    const uploadsDir = path.join(__dirname, '../uploads');
+    const filePath = path.join(uploadsDir, filename);
+    
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      console.error(`Image file not found: ${filePath}`);
+      // Return default image instead
+      return res.status(404).sendFile(path.join(__dirname, '../../frontend/public/default-scan.png'));
+    }
+    
+    // Set proper CORS headers for images
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET');
+    
+    // Set content type based on file extension
+    const ext = path.extname(filename).toLowerCase();
+    if (ext === '.jpg' || ext === '.jpeg') {
+      res.setHeader('Content-Type', 'image/jpeg');
+    } else if (ext === '.png') {
+      res.setHeader('Content-Type', 'image/png');
+    }
+    
+    // Send the file
+    res.sendFile(filePath);
+  } catch (err) {
+    console.error('Error serving scan image:', err);
+    res.status(500).json({ msg: 'Error serving image' });
+  }
+});
+
 module.exports = router;

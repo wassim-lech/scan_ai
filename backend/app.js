@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -36,10 +37,38 @@ app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/help', require('./routes/help'));
 app.use('/api/scans', require('./routes/scan'));
+app.use('/api/subscription', require('./routes/subscription'));
 
 // Serve uploaded files as static files
 const path = require('path');
 app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
+console.log('Serving static files from:', path.join(__dirname, 'uploads'));
+
+// Add a special route to view a specific image by filename
+app.get('/api/image/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const imagePath = path.join(__dirname, 'uploads', filename);
+  
+  // Log the request for debugging
+  console.log(`Image request for: ${filename}, full path: ${imagePath}`);
+  
+  // Check if file exists
+  if (!fs.existsSync(imagePath)) {
+    console.log(`File not found: ${imagePath}`);
+    return res.status(404).json({ error: 'Image not found' });
+  }
+  
+  // Serve the file with proper content type based on extension
+  const ext = path.extname(filename).toLowerCase();
+  if (ext === '.jpg' || ext === '.jpeg') {
+    res.setHeader('Content-Type', 'image/jpeg');
+  } else if (ext === '.png') {
+    res.setHeader('Content-Type', 'image/png');
+  }
+  
+  res.sendFile(imagePath);
+});
+
 // Add other routes as needed
 
 // MongoDB connection

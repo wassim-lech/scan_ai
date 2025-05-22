@@ -40,16 +40,24 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
-  },
-  role: {
+  },  role: {
     type: String,
     enum: ['free', 'premium', 'doctor', 'admin'],
     default: 'free'
   },
+  specialty: {
+    type: String,
+    default: '',
+    required: function() { return this.role === 'doctor'; }
+  },
   scansRemaining: {
     type: Number,
     default: 1
-  },  scanHistory: {
+  },
+  subscriptionDate: {
+    type: Date,
+    default: null
+  },scanHistory: {
     type: Array,
     default: []
   },

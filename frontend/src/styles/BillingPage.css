@@ -23,7 +23,7 @@
 .billing-header h2 {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #0660B4;
+  color: #0660b4;
   margin-bottom: 0.5rem;
 }
 
@@ -75,7 +75,7 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #0660B4;
+  border-color: #0660b4;
   box-shadow: 0 0 0 3px rgba(6, 96, 180, 0.2);
 }
 
@@ -84,9 +84,18 @@
 }
 
 .error-message {
-  color: #ef4444;
+  color: #e53e3e;
   font-size: 0.85rem;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.form-error {
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: 500;
+  padding: 0.5rem;
+  background-color: #fed7d7;
+  border-radius: 4px;
 }
 
 .billing-summary {
@@ -124,7 +133,7 @@
 
 .submit-button {
   width: 100%;
-  background-color: #0660B4;
+  background-color: #0660b4;
   color: white;
   padding: 1rem;
   border: none;

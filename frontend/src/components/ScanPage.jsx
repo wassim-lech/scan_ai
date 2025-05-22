@@ -79,15 +79,13 @@ const ScanPage = () => {
       setResult(null);
       setError(null);
     }
-  };
-
-  const handleUpload = async () => {
+  };  const handleUpload = async () => {
     if (!file) {
       setError('Please select a file to upload');
       return;
     }
 
-    if (subscriptionStatus === 'free' && scansRemaining <= 0) {
+    if ((subscriptionStatus === 'free' || user?.role === 'free') && scansRemaining <= 0) {
       setError('You have no scans remaining. Please upgrade to premium for more scans.');
       return;
     }
@@ -112,7 +110,8 @@ const ScanPage = () => {
       
       setResult(response.data);
       fetchScanHistory();
-      setIsLoading(false);    } catch (err) {
+      setIsLoading(false);    
+    } catch (err) {
       console.error('Upload failed:', err);
       setError(err.response?.data?.msg || 'Upload failed');
       setIsLoading(false);
@@ -268,25 +267,43 @@ const ScanPage = () => {
     pdf.text(`Email: ${user?.email || 'Unknown'}`, 20, 48);
     pdf.text(`Phone: ${user?.phone || 'Not provided'}`, 20, 56);
     pdf.text(`Scan Date: ${new Date(scan.date).toLocaleDateString()}`, 20, 64);
-    pdf.text(`Report Generated: ${new Date().toLocaleDateString()}`, 20, 72);
-      // Add scan information
+    pdf.text(`Report Generated: ${new Date().toLocaleDateString()}`, 20, 72);    // Add scan information
     if (scan.imageUrl) {
       try {
-        // Load image
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.src = `${process.env.REACT_APP_API_URL || '/api'}/uploads/${scan.imageUrl}`;
+        // Create a temporary container for the image
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.top = '-9999px';
+        document.body.appendChild(tempContainer);
         
-        await new Promise((resolve) => {
-          img.onload = resolve;
+        // Add the image to the DOM
+        const imgElement = document.createElement('img');
+        imgElement.crossOrigin = "Anonymous";
+        imgElement.src = `http://localhost:5001/api/scans/image/${scan.imageUrl}`;
+        imgElement.style.width = '500px'; // Set a fixed width for the canvas
+        tempContainer.appendChild(imgElement);
+        
+        // Wait for the image to load
+        await new Promise((resolve, reject) => {
+          imgElement.onload = resolve;
+          imgElement.onerror = () => {
+            console.error('Failed to load image for PDF');
+            reject(new Error('Failed to load image'));
+          };
+          
+          // Set a timeout in case the image never loads
+          setTimeout(() => reject(new Error('Image load timeout')), 5000);
         });
         
-        // Create canvas and draw image
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
+        // Use html2canvas to convert the image to a canvas
+        const canvas = await html2canvas(imgElement, {
+          useCORS: true,
+          scale: 2
+        });
+        
+        // Clean up the temporary elements
+        document.body.removeChild(tempContainer);
         
         const imgData = canvas.toDataURL('image/jpeg', 0.9);
         
@@ -337,9 +354,24 @@ const ScanPage = () => {
           'Always consult with a healthcare provider.',
           20,
           yPos + 52
-        );
-      } catch (err) {
+        );      } catch (err) {
         console.error('Error generating PDF from history:', err);
+        // Show an error notification to the user
+        alert(`Error generating PDF: ${err.message || 'Unknown error'}`);
+        
+        // Proceed without the image
+        pdf.setFontSize(16);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(198, 40, 40);
+        pdf.text('Error: Could not load scan image', 20, 90);
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text('The scan result is still available below:', 20, 100);
+        
+        // Continue with the rest of the PDF
+        pdf.setFontSize(18);
+        pdf.setFont('helvetica', 'bold');        pdf.text('Scan Analysis Results', 20, 120);
       }
     } else {
       // If no image, just add the results
@@ -485,16 +517,14 @@ const ScanPage = () => {
           
           <p className="upload-note">
             Accepted formats: <strong>JPG, PNG, JPEG</strong> — Please upload a clear chest X-ray image.
-          </p>
-          
-          <div className="scans-remaining">
+          </p>          <div className="scans-remaining">
             <p>
               {user?.role === 'doctor' || user?.role === 'admin' ? (
                 <><strong>Unlimited</strong> scans available</>
-              ) : subscriptionStatus === 'premium' ? (
-                <>Premium account: <strong>{scansRemaining} scans remaining</strong></>
+              ) : (user?.role === 'premium' || subscriptionStatus === 'premium') ? (
+                <>Premium account: <strong>{user?.scansRemaining || scansRemaining} scans remaining</strong></>
               ) : (
-                <>Scans remaining: <strong>{scansRemaining}</strong></>
+                <>Scans remaining: <strong>{user?.scansRemaining || scansRemaining}</strong></>
               )}
             </p>
           </div>
@@ -529,9 +559,12 @@ const ScanPage = () => {
                     </span>
                   </div>                  {scan.imageUrl && (
                     <img 
-                      src={`${process.env.REACT_APP_API_URL || '/api'}/uploads/${scan.imageUrl}`} 
+                      src={`http://localhost:5001/api/scans/image/${scan.imageUrl}`} 
                       alt="Scan" 
-                      className="history-image" 
+                      className="history-image"                      onError={(e) => {
+                        console.error(`Failed to load image: ${scan.imageUrl}`);
+                        e.target.src = '/default-scan.png';
+                      }}
                     />
                   )}
                 </div>
@@ -558,12 +591,15 @@ const ScanPage = () => {
                   <div className="history-detail-confidence">
                     Confidence: {selectedHistoryScan.confidence}%
                   </div>
-                </div>
-                  {selectedHistoryScan.imageUrl && (
+                </div>                  {selectedHistoryScan.imageUrl && (
                   <img 
-                    src={`${process.env.REACT_APP_API_URL || '/api'}/uploads/${selectedHistoryScan.imageUrl}`} 
+                    src={`http://localhost:5001/api/scans/image/${selectedHistoryScan.imageUrl}`} 
                     alt="Scan" 
-                    className="history-detail-image" 
+                    className="history-detail-image"
+                    onError={(e) => {
+                      console.error(`Failed to load detail image: ${selectedHistoryScan.imageUrl}`);
+                      e.target.src = '/default-scan.png';
+                    }}
                   />
                 )}
                 

@@ -51,6 +51,9 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/scanAi', { 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/admin', require('./routes/admin')); // Admin routes
 app.use('/api/scans', require('./routes/scan'));
+app.use('/api/appointments', require('./routes/appointments')); // Added appointments route
+app.use('/api/dashboard', require('./routes/dashboard')); // Added dashboard route
+app.use('/api/users', require('./routes/users')); // Added users route
 // Add other routes as needed
 
 /**

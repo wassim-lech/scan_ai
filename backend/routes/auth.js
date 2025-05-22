@@ -238,4 +238,40 @@ router.get('/verify', auth, async (req, res) => {
   }
 });
 
+// Upgrade user to premium
+router.post('/upgrade-to-premium', auth, async (req, res) => {
+  try {
+    // Find user
+    const user = await User.findById(req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+    
+    // Update user role to premium
+    user.role = 'premium';
+    
+    // Reset scans to premium amount (5)
+    user.scansRemaining = 5;
+    
+    // Set subscription date
+    user.subscriptionDate = new Date();
+    
+    // Save changes
+    await user.save();
+    
+    console.log('User upgraded to premium:', user.username);
+    
+    // Return updated user without password
+    const updatedUser = await User.findById(req.user.id).select('-password');
+    res.json({ 
+      msg: 'Upgraded to premium successfully',
+      user: updatedUser 
+    });
+  } catch (err) {
+    console.error('Error upgrading to premium:', err);
+    res.status(500).json({ msg: 'Server error upgrading to premium' });
+  }
+});
+
 module.exports = router;

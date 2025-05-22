@@ -108,6 +108,27 @@ const AppointmentPageNew = () => {
   // Handle previous button click
   const handlePrevious = () => {
     setCurrentStep(currentStep - 1);
+  };  // Convert 12-hour time format (like "11:00 AM") to 24-hour format (like "11:00")
+  const convertTo24HourFormat = (timeStr) => {
+    if (!timeStr) return '';
+    
+    // Parse the time string
+    const [timePart, modifier] = timeStr.split(' ');
+    let [hours, minutes] = timePart.split(':');
+    
+    // Convert hours to number for manipulation
+    hours = parseInt(hours, 10);
+    
+    // Convert to 24-hour format
+    if (modifier === 'PM' && hours < 12) {
+      hours += 12;
+    }
+    if (modifier === 'AM' && hours === 12) {
+      hours = 0;
+    }
+    
+    // Format back to string, ensuring 2 digits
+    return `${hours.toString().padStart(2, '0')}:${minutes}`;
   };
 
   // Handle form submission
@@ -119,14 +140,63 @@ const AppointmentPageNew = () => {
     }
     
     setLoading(true);
+      // Convert time to 24-hour format
+    const time24Format = convertTo24HourFormat(selectedTimeSlot);
     
-    // Simulate API call
-    setTimeout(() => {
-      // Success - navigate to confirmation page
+    // Ensure date is in proper format (YYYY-MM-DD)
+    let formattedDate = appointmentDate;
+    if (appointmentDate) {
+      try {
+        const dateObj = new Date(appointmentDate);
+        if (!isNaN(dateObj.getTime())) {
+          formattedDate = dateObj.toISOString().split('T')[0];
+        }
+      } catch (error) {
+        console.error('Error formatting date:', error);
+      }
+    }
+    
+    // Create appointment data
+    const appointmentData = {
+      doctor: "Dr. Smith", // You can allow selection of doctors in future
+      date: formattedDate,
+      time: time24Format,
+      firstName,
+      lastName,
+      email,
+      phone,
+      reason: "General consultation" // This could be added as a field in the form
+    };
+    
+    try {
+      // Send appointment data to the backend
+      const response = await fetch('http://localhost:5001/api/appointments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': localStorage.getItem('token')
+        },
+        body: JSON.stringify({
+          doctor: appointmentData.doctor,
+          date: appointmentData.date,
+          time: appointmentData.time,
+          reason: appointmentData.reason
+        })
+      });
+        if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ msg: 'Unknown error' }));
+        console.error('Server error:', errorData);
+        throw new Error(errorData.msg || 'Failed to create appointment');
+      }
+      
+      const data = await response.json();
+      console.log('Appointment created successfully:', data);
+      
+      // Navigate to success page
       navigate('/appointment/success', {
         state: {
           appointment: {
-            id: 'app-' + Math.random().toString(36).substr(2, 9),
+            id: data.appointment._id || 'app-' + Math.random().toString(36).substr(2, 9),
             date: appointmentDate,
             time: selectedTimeSlot
           },
@@ -136,33 +206,24 @@ const AppointmentPageNew = () => {
           phone
         }
       });
-      
+    } catch (error) {
+      console.error('Error creating appointment:', error);
+      alert(`Booking failed: ${error.message || 'Unknown error occurred. Please try again.'}`);
+      setErrors({
+        ...errors,
+        submit: `Failed to book appointment: ${error.message || 'Please try again.'}`
+      });
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split('T')[0];
   };
-  
-  return (
+    return (
     <div className="appointment-container">
-      {/* Progress steps */}
-      <div className="appointment-steps">
-        <div className={`step ${currentStep === 1 ? 'active' : ''} ${currentStep > 1 ? 'completed' : ''}`}>
-          <div className="step-circle">1</div>
-          <div className="step-label">Details</div>
-        </div>
-        <div className={`step ${currentStep === 2 ? 'active' : ''} ${currentStep > 2 ? 'completed' : ''}`}>
-          <div className="step-circle">2</div>
-          <div className="step-label">Timing</div>
-        </div>
-        <div className={`step ${currentStep === 3 ? 'active' : ''}`}>
-          <div className="step-circle">3</div>
-          <div className="step-label">Confirm</div>
-        </div>
-      </div>
       
       {/* Form content */}
       <form onSubmit={handleSubmit}>
@@ -317,18 +378,24 @@ const AppointmentPageNew = () => {
                 </div>
                 <div className="confirmation-value">{phone}</div>
               </div>
-              
-              <div className="confirmation-group">
+                <div className="confirmation-group">
                 <div className="confirmation-label">
                   <Calendar size={18} className="icon" /> Date
                 </div>
                 <div className="confirmation-value">
-                  {appointmentDate ? new Date(appointmentDate).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  }) : 'No date selected'}
+                  {appointmentDate ? (() => {
+                    try {
+                      return new Date(appointmentDate).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      });
+                    } catch (err) {
+                      console.error('Date formatting error:', err);
+                      return appointmentDate; // Fallback to raw date string if formatting fails
+                    }
+                  })() : 'No date selected'}
                 </div>
               </div>
               
@@ -338,12 +405,16 @@ const AppointmentPageNew = () => {
                 </div>
                 <div className="confirmation-value">{selectedTimeSlot || '—'}</div>
               </div>
-            </div>
-            
-            <div className="form-navigation">
+            </div>            <div className="form-navigation">
               <button type="button" className="btn btn-outline" onClick={handlePrevious}>
                 <ArrowLeft size={16} className="mr-2" /> Back
-              </button>              <button type="submit" className="confirm-booking-btn" disabled={loading}>
+              </button>
+              <button 
+                type="button" 
+                className="confirm-booking-btn" 
+                onClick={handleSubmit} 
+                disabled={loading}
+              >
                 {loading ? (
                   <>Processing...</>
                 ) : (
@@ -351,6 +422,11 @@ const AppointmentPageNew = () => {
                 )}
               </button>
             </div>
+            {errors.submit && (
+              <div className="error-message" style={{ marginTop: '10px', textAlign: 'center' }}>
+                {errors.submit}
+              </div>
+            )}
           </div>
         )}
       </form>

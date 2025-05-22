@@ -11,8 +11,7 @@ const CompactSubscription = () => {
   const handleUpgrade = () => {
     navigate('/subscription');
   };
-  
-  if (subscriptionStatus === 'premium') {
+    if (subscriptionStatus === 'premium') {
     return (
       <div className="compact-subscription premium-active">
         <div className="compact-status">
@@ -23,32 +22,39 @@ const CompactSubscription = () => {
         </div>
       </div>
     );
+  } else if (subscriptionStatus === 'unlimited') {
+    return (
+      <div className="compact-subscription unlimited-active">
+        <div className="compact-status">
+          <div className="badge unlimited-badge">Unlimited</div>
+          <div className="scans-info">
+            Unlimited access
+          </div>
+        </div>
+      </div>
+    );
+  } else if (subscriptionStatus === 'free') {
+    return (
+      <div className="compact-subscription free-active">
+        <div className="compact-status">
+          <div className="badge free-badge">Free</div>
+          <div className="scans-info">
+            <span className="scans-count">{scansRemaining}</span> scan{scansRemaining !== 1 ? 's' : ''} remaining
+          </div>
+        </div>
+        
+        <div className="compact-content">
+          <div className="compact-message">
+            <h4>Running low on scans?</h4>
+            <p>Upgrade to Premium for 5 AI scans and priority support</p>
+          </div>
+          <button className="upgrade-button" onClick={handleUpgrade}>
+            Upgrade Now
+          </button>
+        </div>
+      </div>
+    );
   }
-  
-  return (
-    <div className="compact-subscription">
-      <div className="compact-content">
-        <div className="compact-message">
-          <h4>Running low on scans?</h4>
-          <p>Upgrade to Premium for 5 AI scans and priority support</p>
-        </div>
-        <button className="upgrade-button" onClick={handleUpgrade}>
-          Upgrade Now
-        </button>
-      </div>
-      
-      <div className="compact-features">
-        <div className="feature">
-          <Check size={16} className="check-icon" />
-          <span>5 AI Scans</span>
-        </div>
-        <div className="feature">
-          <Check size={16} className="check-icon" />
-          <span>Direct Doctor Review</span>
-        </div>
-      </div>
-    </div>
-  );
 };
 
 export default CompactSubscription;

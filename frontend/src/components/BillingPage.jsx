@@ -6,9 +6,8 @@ import '../styles/BillingPage.css';
 
 const BillingPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, upgradeToPremium: authUpgrade } = useAuth();
   const { upgradeToPremium } = useSubscription();
-  
   // Initialize form with user data if available
   const [formData, setFormData] = useState({
     firstName: user?.first_name || '',
@@ -93,24 +92,33 @@ const BillingPage = () => {
       expiryDate: value
     });
   };
-    const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validateForm()) {
       setLoading(true);
-      
-      // Simulate API call with timeout
-      setTimeout(() => {
-        // Update subscription through context
-        upgradeToPremium();
+        try {
+        // Call the backend API to upgrade user to premium
+        const success = await authUpgrade();
         
-        // Save user's first name for success page
-        localStorage.setItem('firstName', formData.firstName);
-        
-        // Redirect to success page
-        navigate('/premium-success');
+        if (success) {
+          // Update local subscription status
+          await upgradeToPremium();
+          
+          // Save user's first name for success page
+          localStorage.setItem('firstName', formData.firstName);
+          
+          // Redirect to success page
+          navigate('/premium-success');
+        } else {
+          setErrors({ form: 'Failed to upgrade to premium. Please try again.' });
+        }
+      } catch (error) {
+        console.error('Error upgrading to premium:', error);
+        setErrors({ form: 'An error occurred. Please try again.' });
+      } finally {
         setLoading(false);
-      }, 1500);
+      }
     }
   };
   
@@ -257,8 +265,7 @@ const BillingPage = () => {
               <span>$23.77</span>
             </div>
           </div>
-          
-          <button
+            <button
             type="submit"
             className="submit-button"
             disabled={loading}
@@ -267,6 +274,8 @@ const BillingPage = () => {
               <div className="loading-spinner"></div>
             ) : 'Complete Purchase'}
           </button>
+          
+          {errors.form && <p className="error-message form-error">{errors.form}</p>}
           
           <p className="secure-notice">
             <span className="lock-icon">🔒</span> Your payment information is secure and encrypted

@@ -1,11 +1,12 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import AuthContext, { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api from '../utils/api';
 import '../styles/UserProfile.css';
 
-const UserProfile = () => {  const navigate = useNavigate();
+const UserProfile = () => {  
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState(null);
@@ -23,6 +24,35 @@ const UserProfile = () => {  const navigate = useNavigate();
     confirmPassword: ''
   });
   
+  // State for appointments
+  const [appointments, setAppointments] = useState([]);
+  const [loadingAppointments, setLoadingAppointments] = useState(false);
+  
+  // Fetch appointments
+  const fetchAppointments = async () => {
+    try {
+      setLoadingAppointments(true);
+      const response = await api.get('/appointments');
+      
+      // Format the appointment data
+      const formattedAppointments = response.data.map(apt => ({
+        id: apt._id,
+        date: new Date(apt.date).toLocaleDateString(),
+        time: apt.time,
+        doctor: apt.doctor,
+        reason: apt.reason || 'General consultation',
+        status: apt.status.charAt(0).toUpperCase() + apt.status.slice(1) // Capitalize status
+      }));
+      
+      setAppointments(formattedAppointments);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+      toast({ type: 'error', message: 'Failed to load your appointments' });
+    } finally {
+      setLoadingAppointments(false);
+    }
+  };
+  
   // Update userInfo when user data changes
   useEffect(() => {
     if (user) {
@@ -36,6 +66,13 @@ const UserProfile = () => {  const navigate = useNavigate();
       }));
     }
   }, [user]);
+  
+  // Fetch appointments when tab changes to appointments
+  useEffect(() => {
+    if (activeTab === 'appointments') {
+      fetchAppointments();
+    }
+  }, [activeTab]);
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -132,18 +169,10 @@ const UserProfile = () => {  const navigate = useNavigate();
     }
   };
   const { logout } = useAuth();
-  
-  const handleLogout = () => {
+    const handleLogout = () => {
     logout();
     navigate('/');
   };
-
-  // Mock data for appointments
-  const appointments = [
-    { id: 1, date: 'May 15, 2025', time: '10:30 AM', doctor: 'Dr. Smith', reason: 'X-ray Follow-up', status: 'Confirmed' },
-    { id: 2, date: 'Jun 02, 2025', time: '09:00 AM', doctor: 'Dr. Johnson', reason: 'Regular Checkup', status: 'Pending' },
-    { id: 3, date: 'Jun 18, 2025', time: '02:15 PM', doctor: 'Dr. Martinez', reason: 'Lung Examination', status: 'Confirmed' }
-  ];
 
   // Mock data for scan history
   const scanHistory = [
@@ -386,10 +415,9 @@ const UserProfile = () => {  const navigate = useNavigate();
         )}
 
         {activeTab === 'appointments' && (
-          <div className="table-container">
-            <div className="table-header">
+          <div className="table-container">            <div className="table-header">
               <h3>Your Appointments</h3>
-              <button className="book-btn">
+              <button className="book-btn" onClick={() => navigate('/appointment')}>
                 <i className="fas fa-plus"></i> Book New Appointment
               </button>
             </div>
@@ -403,42 +431,81 @@ const UserProfile = () => {  const navigate = useNavigate();
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
-              </thead>
-              <tbody>
-                {appointments.map(appointment => (
-                  <tr key={appointment.id}>
-                    <td>{appointment.date}</td>
-                    <td>{appointment.time}</td>
-                    <td>{appointment.doctor}</td>
-                    <td>{appointment.reason}</td>
-                    <td>
-                      <span className={`status-pill ${appointment.status === 'Confirmed' ? 'status-blue' : 'status-yellow'}`}>
-                        {appointment.status}
-                      </span>
-                    </td>
-                    <td>
-                      <button className="action-btn view-btn">
-                        <i className="fas fa-eye"></i>
-                      </button>
-                      <button className="action-btn edit-btn">
-                        <i className="fas fa-edit"></i>
-                      </button>
-                      <button className="action-btn delete-btn">
-                        <i className="fas fa-trash"></i>
-                      </button>
+              </thead>              <tbody>
+                {loadingAppointments ? (
+                  <tr>
+                    <td colSpan="6" className="loading-cell">
+                      <div className="loading-spinner"></div>
+                      <span>Loading your appointments...</span>
                     </td>
                   </tr>
-                ))}
+                ) : appointments.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="empty-message">
+                      <p>You don't have any appointments yet.</p>
+                      <Link to="/appointment" className="book-link">
+                        Book your first appointment
+                      </Link>
+                    </td>
+                  </tr>
+                ) : (
+                  appointments.map(appointment => (
+                    <tr key={appointment.id}>
+                      <td>{appointment.date}</td>
+                      <td>{appointment.time}</td>
+                      <td>{appointment.doctor}</td>
+                      <td>{appointment.reason}</td>
+                      <td>
+                        <span className={`status-pill ${
+                          appointment.status === 'Confirmed' ? 'status-blue' : 
+                          appointment.status === 'Completed' ? 'status-green' :
+                          appointment.status === 'Cancelled' ? 'status-red' :
+                          'status-yellow'
+                        }`}>
+                          {appointment.status}
+                        </span>
+                      </td>                      <td>
+                        <button 
+                          className="action-btn view-btn" 
+                          title="View Appointment Details"
+                          onClick={() => {
+                            // Create detailed view in a popup or navigate to detailed view
+                            toast.info(`Viewing details for appointment on ${appointment.date}`);
+                          }}
+                        >
+                          <i className="fas fa-eye"></i>
+                        </button>
+                        <button 
+                          className="action-btn edit-btn"
+                          title="Edit Appointment"
+                          onClick={() => navigate('/appointment', { state: { appointmentToEdit: appointment } })}
+                        >
+                          <i className="fas fa-edit"></i>
+                        </button>
+                        <button 
+                          className="action-btn delete-btn"
+                          title="Cancel Appointment"
+                          onClick={() => {
+                            if (window.confirm('Are you sure you want to cancel this appointment?')) {
+                              toast.info('Appointment cancellation feature will be available soon');
+                            }
+                          }}
+                        >
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         )}
 
         {activeTab === 'scan-history' && (
-          <div className="table-container">
-            <div className="table-header">
+          <div className="table-container">            <div className="table-header">
               <h3>Your Scan History</h3>
-              <button className="upload-scan-btn">
+              <button className="upload-scan-btn" onClick={() => navigate('/scan')}>
                 <i className="fas fa-upload"></i> Upload New Scan
               </button>
             </div>
@@ -462,12 +529,34 @@ const UserProfile = () => {  const navigate = useNavigate();
                         {scan.result}
                       </span>
                     </td>
-                    <td>{scan.doctor}</td>
-                    <td>
-                      <button className="action-btn view-btn">
+                    <td>{scan.doctor}</td>                    <td>
+                      <button 
+                        className="action-btn view-btn"
+                        title="View Scan Details" 
+                        onClick={() => {
+                          navigate('/scan', { 
+                            state: { 
+                              view: 'history',
+                              selectedScan: scan 
+                            } 
+                          });
+                        }}
+                      >
                         <i className="fas fa-eye"></i>
                       </button>
-                      <button className="action-btn download-btn">
+                      <button 
+                        className="action-btn download-btn"
+                        title="Download Scan" 
+                        onClick={() => {
+                          navigate('/scan', { 
+                            state: { 
+                              view: 'history',
+                              selectedScan: scan,
+                              downloadPdf: true
+                            } 
+                          });
+                        }}
+                      >
                         <i className="fas fa-download"></i>
                       </button>
                     </td>

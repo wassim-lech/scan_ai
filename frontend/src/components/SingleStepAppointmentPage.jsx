@@ -43,7 +43,20 @@ const api = {
 const API_BASE_URL = 'http://localhost:5001';
 
 const timeUtils = {
-  createTimezoneAwareDate: (dateStr, timeStr) => new Date(`${dateStr}T${timeStr}`)
+  createTimezoneAwareDate: (dateStr, timeStr) => new Date(`${dateStr}T${timeStr}`),
+  to24Hour: (timeStr) => {
+    const [timePart, modifier] = timeStr.split(' ');
+    let [hours, minutes] = timePart.split(':').map(Number);
+    
+    if (modifier === 'PM' && hours < 12) {
+      hours += 12;
+    }
+    if (modifier === 'AM' && hours === 12) {
+      hours = 0;
+    }
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  }
 };
 
 const appointmentService = {
@@ -71,13 +84,17 @@ const SingleStepAppointmentPage = () => {
   const [phone, setPhone] = useState('');
   const [appointmentDate, setAppointmentDate] = useState('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
+  const [selectedDoctor, setSelectedDoctor] = useState(''); // Empty default, will be filled from API
+  const [doctors, setDoctors] = useState([]); // Will be fetched from API
+  const [appointmentPurpose, setAppointmentPurpose] = useState(''); // Purpose of appointment
   const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
     date: '',
-    time: ''
+    time: '',
+    purpose: ''
   });
   const [showInfoDialog, setShowInfoDialog] = useState(false);
   const [takenSlots, setTakenSlots] = useState([]);
@@ -85,12 +102,69 @@ const SingleStepAppointmentPage = () => {
 
   const timeSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '02:00 PM', '03:00 PM', '04:00 PM'];
   
-  // Check authentication and redirect to login if needed
+  const purposeOptions = [
+    { id: 1, value: 'pneumonia-check', label: 'Pneumonia Assessment' },
+    { id: 2, value: 'scan-review', label: 'Scan Result Review' },
+    { id: 3, value: 'general-checkup', label: 'General Check-up' },
+    { id: 4, value: 'follow-up', label: 'Follow-up Appointment' },
+    { id: 5, value: 'consultation', label: 'General Consultation' }
+  ];
+  
+  // Fetch doctors from API
+  const fetchDoctors = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/doctors`);
+      if (response.ok) {
+        const doctorsList = await response.json();
+        console.log('Fetched doctors:', doctorsList);
+        setDoctors(doctorsList);
+        
+        // If user is not premium, select a random doctor based on appointment purpose
+        if (user?.role !== 'premium' && appointmentPurpose) {
+          const purposeLabel = purposeOptions.find(p => p.value === appointmentPurpose)?.label || '';
+          let matchingSpecialty = 'Pulmonologist'; // Default specialty
+          
+          // Map purpose to specialties
+          if (purposeLabel.includes('Pneumonia')) {
+            matchingSpecialty = 'Pulmonologist';
+          } else if (purposeLabel.includes('Scan')) {
+            matchingSpecialty = 'Radiologist';
+          } else if (purposeLabel.includes('Check-up')) {
+            matchingSpecialty = 'General Practitioner';
+          } else if (purposeLabel.includes('Follow-up')) {
+            matchingSpecialty = 'Internal Medicine';
+          }
+          
+          // Find doctors with matching specialty
+          const matchingDoctors = doctorsList.filter(d => 
+            d.specialty && d.specialty.includes(matchingSpecialty)
+          );
+          
+          if (matchingDoctors.length > 0) {
+            // Select random doctor from matching ones
+            const randomDoctor = matchingDoctors[Math.floor(Math.random() * matchingDoctors.length)];
+            setSelectedDoctor(randomDoctor._id);
+          } else if (doctorsList.length > 0) {
+            // Fallback to any doctor if no matching specialty
+            setSelectedDoctor(doctorsList[0]._id);
+          }
+        }
+      } else {
+        console.error('Failed to fetch doctors');
+      }
+    } catch (error) {
+      console.error('Error fetching doctors:', error);
+    }
+  };
+    // Check authentication and redirect to login if needed
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login', { state: { from: location } });
       return;
     }
+    
+    // Fetch doctors list when component mounts
+    fetchDoctors();
     
     // Fetch user profile to pre-fill form fields
     const fetchUserProfile = async () => {
@@ -339,6 +413,13 @@ const SingleStepAppointmentPage = () => {
     } else {
       newErrors.time = '';
     }
+    
+    if (!appointmentPurpose) {
+      newErrors.purpose = 'Please select a purpose for your appointment';
+      isValid = false;
+    } else {
+      newErrors.purpose = '';
+    }
 
     setErrors(newErrors);
     return isValid;
@@ -366,8 +447,7 @@ const SingleStepAppointmentPage = () => {
         setLoading(false);
         return;
       }
-      
-      // Create date in local time without timezone adjustment
+        // Create date in local time without timezone adjustment
       try {
         // Parse date and time components directly
         const [year, month, day] = appointmentDate.split('-').map(Number);
@@ -393,51 +473,81 @@ const SingleStepAppointmentPage = () => {
         
         // Format date string in ISO format for API but with consistent values
         // This uses a format that avoids timezone issues: "YYYY-MM-DDTHH:MM:00"
-        const formattedDateTime = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
-        
-        // Prepare appointment data
+        const formattedDateTime = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;          // Get selected doctor details
+        const selectedDoctorData = doctors.find(d => d._id === selectedDoctor) || null;
+          
+        // Prepare appointment data for our backend API format
         const appointmentData = {
-          date_time: formattedDateTime,
-          status: 'confirmed',
-          notes: `Appointment booked by ${firstName} ${lastName} (${email}, ${phone})`
+          doctor: selectedDoctorData ? `${selectedDoctorData.first_name} ${selectedDoctorData.last_name}` : selectedDoctor,
+          doctorId: selectedDoctorData?._id || selectedDoctor,
+          date: appointmentDate,  // YYYY-MM-DD format
+          time: time24, // 24-hour format as required by the backend
+          reason: appointmentPurpose ? purposeOptions.find(p => p.value === appointmentPurpose)?.label : `Appointment booked by ${firstName} ${lastName}`,
+          doctorEmail: selectedDoctorData?.email || 'doctor@smartcare.com',
+          doctorSpecialty: selectedDoctorData?.specialty || 'Specialist'
         };
-        
-        console.log('Submitting appointment data:', appointmentData);
+          console.log('Submitting appointment data:', appointmentData);
         
         // Submit to API with complete error handling
         try {
-          // Ensure headers are properly set before the request
+          // Use the correct authorization header format for our backend
           const token = localStorage.getItem('token');
-          if (token) {
-            api.defaults.headers.common['Authorization'] = `Token ${token}`;
+          console.log('Using auth token:', token ? 'Token found' : 'No token');
+          
+          // Make a direct fetch request to ensure correct headers and endpoint
+          const response = await fetch(`${API_BASE_URL}/api/appointments`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-auth-token': token
+            },
+            body: JSON.stringify(appointmentData)
+          });
+          
+          console.log('API response status:', response.status);
+          
+          if (!response.ok) {
+            let errorMessage = 'Failed to create appointment';
+            try {
+              const errorData = await response.json();
+              errorMessage = errorData.msg || errorMessage;
+              console.error('Error response data:', errorData);
+            } catch (jsonError) {
+              console.error('Failed to parse error response:', jsonError);
+            }
+            throw new Error(errorMessage);
           }
           
-          const response = await api.post('/appointments/', appointmentData);
-          console.log('Appointment created successfully:', response.data);
-          
-          // Redirect to success page with appointment details
-          navigate('/appointment/success', { 
+          const data = await response.json();          console.log('Appointment created successfully:', data);          // Redirect to success page with appointment details
+          navigate('/appointment/success',{ 
             state: { 
-              appointment: response.data,
+              appointment: data.appointment,
+              message: data.msg,
               firstName,
               lastName,
               email,
               phone,
               appointmentDate,
-              selectedTimeSlot
+              selectedTimeSlot,
+              selectedDoctor,
+              appointmentPurpose: appointmentPurpose ? purposeOptions.find(p => p.value === appointmentPurpose)?.label : null
             }
           });
         } catch (apiError) {
-          console.error('API Error Details:', apiError.response?.data || apiError.message);
+          console.error('API Error Details:', apiError);
           if (apiError.response?.status === 400) {
             customToast.error(apiError.response.data?.detail || 'Invalid appointment data');
           } else if (apiError.response?.status === 401) {
             customToast.error('Please log in again to continue');
             navigate('/login', { state: { returnPath: location.pathname } });
+          } else if (apiError.response?.status === 404) {
+            customToast.error('Appointment service unavailable. Please try again later.');
+            console.error('API endpoint not found. Check server configuration.');
           } else if (apiError.response?.status === 500) {
             customToast.error('Server error. Please try again later.');
           } else {
             customToast.error('Failed to book appointment. Please try again.');
+            console.error('Error details:', apiError.message);
           }
         }
       } catch (dateError) {
@@ -469,29 +579,45 @@ const SingleStepAppointmentPage = () => {
     });
   };
 
+  // Effect to select doctor based on purpose for non-premium users
+  useEffect(() => {
+    if (user?.role !== 'premium' && appointmentPurpose && doctors.length > 0) {
+      const purposeLabel = purposeOptions.find(p => p.value === appointmentPurpose)?.label || '';
+      let matchingSpecialty = 'Pulmonologist'; // Default specialty
+      
+      // Map purpose to specialties
+      if (purposeLabel.includes('Pneumonia')) {
+        matchingSpecialty = 'Pulmonologist';
+      } else if (purposeLabel.includes('Scan')) {
+        matchingSpecialty = 'Radiologist';
+      } else if (purposeLabel.includes('Check-up')) {
+        matchingSpecialty = 'General Practitioner';
+      } else if (purposeLabel.includes('Follow-up')) {
+        matchingSpecialty = 'Internal Medicine';
+      }
+      
+      // Find doctors with matching specialty
+      const matchingDoctors = doctors.filter(d => 
+        d.specialty && d.specialty.toLowerCase().includes(matchingSpecialty.toLowerCase())
+      );
+      
+      if (matchingDoctors.length > 0) {
+        // Select random doctor from matching ones
+        const randomDoctor = matchingDoctors[Math.floor(Math.random() * matchingDoctors.length)];
+        setSelectedDoctor(randomDoctor._id);
+      } else if (doctors.length > 0) {
+        // Fallback to any doctor if no matching specialty
+        setSelectedDoctor(doctors[0]._id);
+      }
+    }
+  }, [appointmentPurpose, doctors, user?.role]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="background-pattern"></div>
       
       <main className="appointment-container">
-        <div className="max-w-5xl mx-auto my-8">
-          <div className="appointment-wrapper">
-            {/* Progress Bar / Steps Indicator */}
-            <div className="appointment-steps">
-              <div className={`step ${currentStep === 1 ? 'active' : ''} ${currentStep > 1 ? 'completed' : ''}`}>
-                <div className="step-circle">1</div>
-                <div className="step-label">Details</div>
-              </div>
-              <div className={`step ${currentStep === 2 ? 'active' : ''} ${currentStep > 2 ? 'completed' : ''}`}>
-                <div className="step-circle">2</div>
-                <div className="step-label">Timing</div>
-              </div>
-              <div className={`step ${currentStep === 3 ? 'active' : ''}`}>
-                <div className="step-circle">3</div>
-                <div className="step-label">Confirm</div>
-              </div>
-            </div>
-            
+        <div className="max-w-5xl mx-auto my-8">          <div className="appointment-wrapper">
             {/* Main form content */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Left column - Personal Information */}
@@ -620,6 +746,64 @@ const SingleStepAppointmentPage = () => {
                   </div>
                   {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
                 </div>
+                  {/* Doctor Selection (only for premium users) */}
+                {user?.role === 'premium' && (
+                  <div>
+                    <label htmlFor="doctor" className="block text-sm font-medium mb-1">Select Doctor</label>
+                    <select
+                      id="doctor"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      value={selectedDoctor}
+                      onChange={(e) => setSelectedDoctor(e.target.value)}
+                    >
+                      <option value="">Select a doctor</option>
+                      {doctors.map(doctor => (
+                        <option key={doctor._id} value={doctor._id}>
+                          {doctor.first_name} {doctor.last_name} ({doctor.specialty})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                
+                {/* For non-premium users, show the selected doctor info */}
+                {user?.role !== 'premium' && doctors.length > 0 && (
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4">
+                    <p className="text-sm font-medium text-blue-800 mb-1">Your Assigned Doctor</p>
+                    <p className="text-blue-700">
+                      {selectedDoctor ? (
+                        <>
+                          {doctors.find(d => d._id === selectedDoctor)?.first_name || ''} {doctors.find(d => d._id === selectedDoctor)?.last_name || ''} 
+                          <span className="text-blue-500 text-sm ml-1">
+                            ({doctors.find(d => d._id === selectedDoctor)?.specialty || 'Specialist'})
+                          </span>
+                        </>
+                      ) : 'A doctor will be assigned based on availability'}
+                    </p>
+                  </div>
+                )}
+                
+                {/* Appointment Purpose for all users */}
+                <div>
+                  <label htmlFor="purpose" className="block text-sm font-medium mb-1">Appointment Purpose</label>
+                  <select
+                    id="purpose"
+                    className={`w-full p-3 border ${errors.purpose ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50`}
+                    value={appointmentPurpose}
+                    onChange={(e) => {
+                      setAppointmentPurpose(e.target.value);
+                      setErrors({...errors, purpose: ''});
+                    }}
+                  >
+                    <option value="">Select a purpose</option>
+                    {purposeOptions.map(purpose => (
+                      <option key={purpose.id} value={purpose.value}>
+                        {purpose.label}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.purpose && <p className="text-red-500 text-xs mt-1">{errors.purpose}</p>}
+                </div>
               </div>
             </div>
             
@@ -658,6 +842,24 @@ const SingleStepAppointmentPage = () => {
                       <Clock className="h-4 w-4 mr-2" />Time
                     </p>
                     <p className="font-medium">{selectedTimeSlot || '—'}</p>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1 flex items-center">
+                      <i className="fas fa-user-md h-4 w-4 mr-2"></i>Doctor
+                    </p>
+                    <p className="font-medium">{selectedDoctor || '—'}</p>
+                  </div>
+                  
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1 flex items-center">
+                      <i className="fas fa-clipboard-list h-4 w-4 mr-2"></i>Purpose
+                    </p>
+                    <p className="font-medium">
+                      {appointmentPurpose 
+                        ? purposeOptions.find(p => p.value === appointmentPurpose)?.label 
+                        : '—'}
+                    </p>
                   </div>
                 </div>
               </div>

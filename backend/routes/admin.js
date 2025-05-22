@@ -185,6 +185,6 @@ router.put('/appointments/:id', [auth, roleCheck(['admin'])], async (req, res) =
     res.status(500).json({ msg: 'Server error', details: err.message });
   }
 });
-});
+
 
 module.exports = router;

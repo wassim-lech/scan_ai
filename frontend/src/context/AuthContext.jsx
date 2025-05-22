@@ -132,13 +132,16 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     setUser(null);
     toast.info('You have been logged out');
-  };
-  // Upgrade to premium
+  };  // Upgrade to premium
   const upgradeToPremium = async () => {
     try {
       const res = await api.post('/auth/upgrade-to-premium', {});
       console.log('Upgrade response:', res.data);
       setUser(res.data.user);
+      
+      // Trigger a user refresh to get the latest scans count
+      await refreshUser();
+      
       return true;
     } catch (err) {
       console.error('Upgrade error details:', err);

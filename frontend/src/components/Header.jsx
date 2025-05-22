@@ -28,11 +28,11 @@ const Header = () => {
   useEffect(() => {
     const handleOutsideClick = (event) => {
       const sidebar = document.getElementById('sidebar');
-      const icon = document.querySelector(`.${styles.settingsIcon}`);
+      const profileIcon = document.querySelector(`.${styles.profileIcon}`);
 
-      if (sidebar && icon) {
+      if (sidebar && profileIcon) {
         const isClickInsideSidebar = sidebar.contains(event.target);
-        const isClickOnIcon = icon.contains(event.target);
+        const isClickOnIcon = profileIcon.contains(event.target);
 
         if (!isClickInsideSidebar && !isClickOnIcon && sidebarVisible) {
           setSidebarVisible(false);
@@ -68,20 +68,39 @@ const Header = () => {
             <li><Link to="/">Home</Link></li>
             <li><Link to="/scan">Scan</Link></li>
             <li><Link to="/appointment">Appointment</Link></li>
+
             <li><Link to="/about">About</Link></li>
             <li><Link to="/help">Help & Support</Link></li>
-          </ul>
-          <div className={`${styles.navButtons} ${menuOpen ? styles.navButtonsActive : ''}`}>
+          </ul>          <div className={`${styles.navButtons} ${menuOpen ? styles.navButtonsActive : ''}`}>
             {isAuthenticated ? (
               <>
-                <span className={styles.welcomeText}>Welcome, {user?.username}</span>
-                {user?.role === 'premium' && <span className={styles.premiumBadge}>Premium</span>}
-                <button onClick={logout} className={styles.loginBtn}>Logout</button>
-                {user?.role === 'free' && (
-                  <button onClick={upgradeToPremium} className={styles.loginBtn}>
-                    Upgrade to Premium
-                  </button>
-                )}
+                <div className={styles.profileSection}>
+                  
+                  <div className={styles.profileIcon} onClick={toggleSidebar}>
+                    {user?.profileImage ? (
+                      <img src={user.profileImage} alt="Profile" />
+                    ) : (
+                      <div className={`${styles.defaultAvatar} ${
+                        user?.role === 'premium' ? styles.goldBorder : 
+                        user?.role === 'free' ? styles.blueBorder : 
+                        user?.role === 'doctor' ? styles.greenBorder : 
+                        styles.purpleBorder
+                      }`}>
+                        {user?.username ? user.username.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                    )}
+                  </div>
+                  <span 
+                    className={`${styles.username} ${
+                      user?.role === 'premium' ? styles.goldText : 
+                      user?.role === 'free' ? styles.blueText : 
+                      user?.role === 'doctor' ? styles.greenText : 
+                      styles.purpleText
+                    }`}
+                  >
+                    {user?.username}
+                  </span>
+                </div>
               </>
             ) : (
               <>
@@ -91,9 +110,6 @@ const Header = () => {
                 <Link to="/auth" state={{ isSignUp: true }} className={styles.signupBtn}>Sign up</Link>
               </>
             )}
-            <span className={styles.settingsIcon} onClick={toggleSidebar}>
-              <i className="fa-solid fa-gear" style={{ color: '#1e57b8' }}></i>
-            </span>
           </div>
           <div className={styles.menuToggle} onClick={toggleMenu}>☰</div>
         </nav>      </header>

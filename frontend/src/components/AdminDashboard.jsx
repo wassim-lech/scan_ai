@@ -15,74 +15,135 @@ const AdminDashboard = () => {
   
   // State for dashboard data
   const [dashboardData, setDashboardData] = useState(null);
-  const [recentPatients, setRecentPatients] = useState([]);
-  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
+  const [recentPatients, setRecentPatients] = useState([]);  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [completedAppointments, setCompletedAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-    // Fetch dashboard data when component mounts
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  
+  // Function to fetch dashboard data
+  const fetchDashboardData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const headers = {
+        'x-auth-token': token
+      };
+
+      // Fetch main dashboard stats
+      const dashboardResponse = await fetch('http://localhost:5001/api/dashboard/dashboard', {
+        headers
+      });
+      
+      if (!dashboardResponse.ok) {
+        throw new Error('Failed to fetch dashboard data');
+      }
+      
+      const dashboardStats = await dashboardResponse.json();
+      setDashboardData(dashboardStats);
+      
+      // Fetch recent patients with scan history
+      const patientsResponse = await fetch('http://localhost:5001/api/dashboard/recent-patients', {
+        headers
+      });
+      
+      if (patientsResponse.ok) {
+        const patientsData = await patientsResponse.json();
+        setRecentPatients(patientsData);
+      }
+      
+      // Fetch all appointments for the admin dashboard
+      // First, try upcoming appointments
+      const upcomingResponse = await fetch('http://localhost:5001/api/dashboard/upcoming-appointments', {
+        headers
+      });
+      
+      if (upcomingResponse.ok) {
+        const upcomingData = await upcomingResponse.json();
+        setUpcomingAppointments(upcomingData);
+      }
+      
+      // Now, fetch completed appointments
+      const completedResponse = await fetch('http://localhost:5001/api/dashboard/completed-appointments', {
+        headers
+      });
+      
+      if (completedResponse.ok) {
+        const completedData = await completedResponse.json();
+        setCompletedAppointments(completedData);
+      }
+      
+      // If API endpoints don't return data, fall back to fetching directly from appointments
+      if ((!upcomingResponse.ok || upcomingAppointments.length === 0) &&
+          (!completedResponse.ok || completedAppointments.length === 0)) {
+        try {
+          const allAppointmentsResponse = await fetch('http://localhost:5001/api/appointments/all', {
+            headers
+          });
+          
+          if (allAppointmentsResponse.ok) {
+            const allAppointmentsData = await allAppointmentsResponse.json();
+            
+            // Split appointments into upcoming and completed
+            const now = new Date();
+            const upcoming = [];
+            const completed = [];
+            
+            allAppointmentsData.forEach(appointment => {
+              const appointmentDate = new Date(appointment.date);
+              const formattedAppointment = {
+                id: appointment._id,
+                patientName: appointment.userId ? 
+                  `${appointment.userId.first_name || ''} ${appointment.userId.last_name || ''}` : 
+                  'Unknown User',
+                email: appointment.userId ? appointment.userId.email : '',
+                doctor: appointment.doctor,
+                date: appointment.date,
+                time: appointment.time,
+                status: appointment.status,
+                reason: appointment.reason || 'General consultation'
+              };
+              
+              if (appointmentDate >= now && 
+                  (appointment.status === 'pending' || appointment.status === 'confirmed')) {
+                upcoming.push(formattedAppointment);
+              } else {
+                completed.push(formattedAppointment);
+              }
+            });
+            
+            if (upcoming.length > 0) setUpcomingAppointments(upcoming);
+            if (completed.length > 0) setCompletedAppointments(completed);
+          }
+        } catch (err) {
+          console.error('Error fetching all appointments:', err);
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      return false;
+    }
+  };
+  // Fetch dashboard data when component mounts
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const initCharts = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          navigate('/login');
-          return;
-        }
-
-        const headers = {
-          'x-auth-token': token
-        };
-
-        // Fetch main dashboard stats
-        const dashboardResponse = await fetch('http://localhost:5001/api/dashboard/dashboard', {
-          headers
-        });
-        
-        if (!dashboardResponse.ok) {
-          throw new Error('Failed to fetch dashboard data');
-        }
-        
-        const dashboardStats = await dashboardResponse.json();
-        setDashboardData(dashboardStats);
-        
-        // Fetch recent patients with scan history
-        const patientsResponse = await fetch('http://localhost:5001/api/dashboard/recent-patients', {
-          headers
-        });
-        
-        if (patientsResponse.ok) {
-          const patientsData = await patientsResponse.json();
-          setRecentPatients(patientsData);
-        }
-        
-        // Fetch upcoming appointments
-        const upcomingResponse = await fetch('http://localhost:5001/api/dashboard/upcoming-appointments', {
-          headers
-        });
-        
-        if (upcomingResponse.ok) {
-          const upcomingData = await upcomingResponse.json();
-          setUpcomingAppointments(upcomingData);
-        }
-        
-        // Fetch completed appointments
-        const completedResponse = await fetch('http://localhost:5001/api/dashboard/completed-appointments', {
-          headers
-        });
-        
-        if (completedResponse.ok) {
-          const completedData = await completedResponse.json();
-          setCompletedAppointments(completedData);
-        }
-        
-        setIsLoading(false);
+        await fetchDashboardData();
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        console.error('Failed to initialize dashboard data:', error);
+      } finally {
         setIsLoading(false);
       }
     };
-
-    fetchDashboardData();
+    
+    initCharts();
   }, [navigate]);
 
   // Helper functions for formatting
@@ -107,9 +168,8 @@ const AdminDashboard = () => {
       default:
         return styles.statusBlue;
     }
-  };
-  // Use real data for charts if available, otherwise use the mock data
-  const scansData = dashboardData ? {
+  };  // Use real data for charts if available, otherwise use the mock data
+  const scansData = dashboardData && dashboardData.scanData ? {
     labels: dashboardData.scanData.map(item => item.month),
     datasets: [{
       label: 'Scans',
@@ -129,8 +189,7 @@ const AdminDashboard = () => {
       fill: true,
       tension: 0.3
     }]
-  };
-  const diagnosesData = dashboardData ? {
+  };  const diagnosesData = dashboardData && dashboardData.scanStats && dashboardData.scanStats.diagnosisBreakdown ? {
     labels: Object.keys(dashboardData.scanStats.diagnosisBreakdown),
     datasets: [{
       data: Object.values(dashboardData.scanStats.diagnosisBreakdown),
@@ -144,8 +203,7 @@ const AdminDashboard = () => {
       backgroundColor: ['#34c759', '#ff3b30', '#ffcc00'],
       borderWidth: 0
     }]
-  };
-  const appointmentsData = dashboardData ? {
+  };  const appointmentsData = dashboardData && dashboardData.appointmentsByDay ? {
     labels: dashboardData.appointmentsByDay.map(item => item.day),
     datasets: [{
       label: 'Appointments',
@@ -159,8 +217,7 @@ const AdminDashboard = () => {
       data: [45, 30, 38, 42, 50, 25, 15],
       backgroundColor: '#0070f3'
     }]
-  };
-  const growthData = dashboardData ? {
+  };  const growthData = dashboardData && dashboardData.growthData ? {
     labels: dashboardData.growthData.map(item => item.month),
     datasets: [{
       label: 'New Users',
@@ -194,8 +251,7 @@ const AdminDashboard = () => {
     maintainAspectRatio: false,
     plugins: { legend: { position: 'bottom' } },
     cutout: '70%'
-  };
-  const handleSectionChange = (section) => {
+  };  const handleSectionChange = (section) => {
     if (section === 'inquiries') {
       setShowInquiryPage(true);
       setShowDatabaseManager(false);
@@ -209,6 +265,50 @@ const AdminDashboard = () => {
       setActiveSection(section);
       const element = document.getElementById(section);
       if (element) element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // View appointment details
+  const viewAppointmentDetails = (appointment) => {
+    setSelectedAppointment(appointment);
+    setShowAppointmentModal(true);
+  };
+
+  // Close appointment modal
+  const closeAppointmentModal = () => {
+    setShowAppointmentModal(false);
+    setSelectedAppointment(null);
+  };
+
+  // Update appointment status
+  const updateAppointmentStatus = async (appointmentId, newStatus) => {
+    try {
+      setUpdatingStatus(true);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5001/api/appointments/status/${appointmentId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (response.ok) {
+        // Refresh dashboard data to get updated appointments
+        await fetchDashboardData();
+        setShowAppointmentModal(false);
+        // Alert user of successful status update
+        alert(`Appointment status updated to ${newStatus}`);
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.msg || 'Failed to update appointment status'}`);
+      }
+    } catch (error) {
+      console.error('Error updating appointment status:', error);
+      alert('Failed to update appointment status');
+    } finally {
+      setUpdatingStatus(false);
     }
   };
 
@@ -446,6 +546,81 @@ const AdminDashboard = () => {
             <div className={styles.tableContainer}>
               <div className={styles.tableHeader}>
                 <div className={styles.tableTitle}>Upcoming Appointments</div>
+                <div className={styles.tableActions}>
+                  <button className={styles.refreshBtn} onClick={() => {
+                    setIsLoading(true);
+                    fetchDashboardData().then(() => setIsLoading(false));
+                  }}>
+                    <i className="fas fa-sync-alt"></i> Refresh
+                  </button>
+                </div>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Doctor</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan="7" className={styles.loadingMessage}>Loading appointments...</td>
+                    </tr>
+                  ) : upcomingAppointments.length > 0 ? (
+                    upcomingAppointments.map((appointment) => (
+                      <tr key={appointment.id}>
+                        <td>{appointment.patientName}</td>
+                        <td>{formatDate(appointment.date)}</td>
+                        <td>{appointment.time}</td>
+                        <td>{appointment.doctor}</td>
+                        <td>{appointment.reason || 'General consultation'}</td>
+                        <td>
+                          <span className={`${styles.statusPill} ${getStatusPillStyle(appointment.status)}`}>
+                            {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                          </span>
+                        </td>                        <td>
+                          <button 
+                            className={`${styles.actionBtn} ${styles.viewBtn}`} 
+                            title="View Details"
+                            onClick={() => viewAppointmentDetails(appointment)}
+                          >
+                            <i className="fas fa-eye"></i>
+                          </button>
+                          <button 
+                            className={`${styles.actionBtn} ${styles.editBtn}`} 
+                            title="Edit Appointment"
+                            onClick={() => viewAppointmentDetails(appointment)}
+                          >
+                            <i className="fas fa-edit"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="7" className={styles.noData}>No upcoming appointments</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+              {upcomingAppointments.length > 5 && (
+                <ul className={styles.pagination}>
+                  <li className={styles.active}><a href="#">1</a></li>
+                  <li><a href="#">2</a></li>
+                  <li><a href="#">3</a></li>
+                </ul>
+              )}
+            </div>
+
+            <div className={styles.tableContainer}>
+              <div className={styles.tableHeader}>
+                <div className={styles.tableTitle}>Completed Appointments</div>
               </div>
               <table>
                 <thead>
@@ -463,8 +638,8 @@ const AdminDashboard = () => {
                     <tr>
                       <td colSpan="6" className={styles.loadingMessage}>Loading appointments...</td>
                     </tr>
-                  ) : upcomingAppointments.length > 0 ? (
-                    upcomingAppointments.map((appointment) => (
+                  ) : completedAppointments.length > 0 ? (
+                    completedAppointments.map((appointment) => (
                       <tr key={appointment.id}>
                         <td>{appointment.patientName}</td>
                         <td>{formatDate(appointment.date)}</td>
@@ -472,77 +647,42 @@ const AdminDashboard = () => {
                         <td>{appointment.doctor}</td>
                         <td>
                           <span className={`${styles.statusPill} ${getStatusPillStyle(appointment.status)}`}>
-                            {appointment.status}
+                            {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
                           </span>
-                        </td>
-                        <td>
-                          <button className={`${styles.actionBtn} ${styles.viewBtn}`}>
+                        </td>                        <td>
+                          <button 
+                            className={`${styles.actionBtn} ${styles.viewBtn}`} 
+                            title="View Details"
+                            onClick={() => viewAppointmentDetails(appointment)}
+                          >
                             <i className="fas fa-eye"></i>
                           </button>
-                          <button className={`${styles.actionBtn} ${styles.editBtn}`}>
-                            <i className="fas fa-edit"></i>
-                          </button>
+                          {appointment.status !== 'cancelled' && (
+                            <button 
+                              className={`${styles.actionBtn} ${styles.deleteBtn}`} 
+                              title="Cancel Appointment"
+                              onClick={() => updateAppointmentStatus(appointment.id, 'cancelled')}
+                            >
+                              <i className="fas fa-times"></i>
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className={styles.noData}>No upcoming appointments</td>
+                      <td colSpan="6" className={styles.noData}>No completed appointments</td>
                     </tr>
                   )}
                 </tbody>
               </table>
-            </div>
-
-            <div className={styles.tableContainer}>
-              <div className={styles.tableHeader}>
-                <div className={styles.tableTitle}>Completed Appointments</div>
-              </div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Patient</th>
-                    <th>Date</th>
-                    <th>Doctor</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {isLoading ? (
-                    <tr>
-                      <td colSpan="5" className={styles.loadingMessage}>Loading appointments...</td>
-                    </tr>
-                  ) : completedAppointments.length > 0 ? (
-                    completedAppointments.map((appointment) => (
-                      <tr key={appointment.id}>
-                        <td>{appointment.patientName}</td>
-                        <td>{formatDate(appointment.date)}</td>
-                        <td>{appointment.doctor}</td>
-                        <td>
-                          <span className={`${styles.statusPill} ${getStatusPillStyle(appointment.status)}`}>
-                            {appointment.status}
-                          </span>
-                        </td>
-                        <td>
-                          <button className={`${styles.actionBtn} ${styles.viewBtn}`}>
-                            <i className="fas fa-eye"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="5" className={styles.noData}>No completed appointments</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-              <ul className={styles.pagination}>
-                <li className={styles.active}><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-              </ul>
+              {completedAppointments.length > 5 && (
+                <ul className={styles.pagination}>
+                  <li className={styles.active}><a href="#">1</a></li>
+                  <li><a href="#">2</a></li>
+                  <li><a href="#">3</a></li>
+                </ul>
+              )}
             </div>
           </section>
         </main>
@@ -673,6 +813,85 @@ const AdminDashboard = () => {
                   <button style={{ padding: '10px 20px', backgroundColor: 'var(--primary-color)', color: 'var(--white)', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Send Reply</button>
                 </div>
               </div>
+            </div>
+          </div>        </div>
+      )}
+      
+      {/* Appointment Detail Modal */}
+      {showAppointmentModal && selectedAppointment && (
+        <div className={styles.modalOverlay} onClick={closeAppointmentModal}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3>Appointment Details</h3>
+              <button className={styles.closeModalBtn} onClick={closeAppointmentModal}>
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <div className={styles.appointmentDetail}>
+                <span className={styles.detailLabel}>Patient:</span>
+                <span className={styles.detailValue}>{selectedAppointment.patientName}</span>
+              </div>
+              <div className={styles.appointmentDetail}>
+                <span className={styles.detailLabel}>Date:</span>
+                <span className={styles.detailValue}>{formatDate(selectedAppointment.date)}</span>
+              </div>
+              <div className={styles.appointmentDetail}>
+                <span className={styles.detailLabel}>Time:</span>
+                <span className={styles.detailValue}>{selectedAppointment.time}</span>
+              </div>
+              <div className={styles.appointmentDetail}>
+                <span className={styles.detailLabel}>Doctor:</span>
+                <span className={styles.detailValue}>{selectedAppointment.doctor}</span>
+              </div>
+              <div className={styles.appointmentDetail}>
+                <span className={styles.detailLabel}>Reason:</span>
+                <span className={styles.detailValue}>{selectedAppointment.reason || 'General consultation'}</span>
+              </div>
+              <div className={styles.appointmentDetail}>
+                <span className={styles.detailLabel}>Status:</span>
+                <span className={`${styles.statusPill} ${getStatusPillStyle(selectedAppointment.status)}`}>
+                  {selectedAppointment.status.charAt(0).toUpperCase() + selectedAppointment.status.slice(1)}
+                </span>
+              </div>
+              
+              <div className={styles.statusUpdateSection}>
+                <h4>Update Status</h4>
+                <div className={styles.statusBtnGroup}>
+                  <button 
+                    disabled={updatingStatus || selectedAppointment.status === 'pending'} 
+                    className={`${styles.statusBtn} ${selectedAppointment.status === 'pending' ? styles.activeStatusBtn : ''}`}
+                    onClick={() => updateAppointmentStatus(selectedAppointment.id, 'pending')}
+                  >
+                    Pending
+                  </button>
+                  <button 
+                    disabled={updatingStatus || selectedAppointment.status === 'confirmed'} 
+                    className={`${styles.statusBtn} ${selectedAppointment.status === 'confirmed' ? styles.activeStatusBtn : ''}`}
+                    onClick={() => updateAppointmentStatus(selectedAppointment.id, 'confirmed')}
+                  >
+                    Confirmed
+                  </button>
+                  <button 
+                    disabled={updatingStatus || selectedAppointment.status === 'completed'} 
+                    className={`${styles.statusBtn} ${selectedAppointment.status === 'completed' ? styles.activeStatusBtn : ''}`}
+                    onClick={() => updateAppointmentStatus(selectedAppointment.id, 'completed')}
+                  >
+                    Completed
+                  </button>
+                  <button 
+                    disabled={updatingStatus || selectedAppointment.status === 'cancelled'} 
+                    className={`${styles.statusBtn} ${selectedAppointment.status === 'cancelled' ? styles.activeStatusBtn : ''}`}
+                    onClick={() => updateAppointmentStatus(selectedAppointment.id, 'cancelled')}
+                  >
+                    Cancelled
+                  </button>
+                </div>
+                {updatingStatus && <p className={styles.updatingMessage}>Updating status...</p>}
+              </div>
+            </div>
+            <div className={styles.modalFooter}>
+              <button className={styles.closeBtn} onClick={closeAppointmentModal}>Close</button>
             </div>
           </div>
         </div>

@@ -151,17 +151,11 @@ const LandingPage = () => {
                 <div className="future-content">
                     <div className="text-block">
                         <h2>The Future <br /><span className="highlight">of Quality Health</span></h2>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nec risus feugiat lectus risus sed ullamcorper.
-                            Auctor semper fermentum volutpat integer vel. In rhoncus elementum nunc, malesuada mi sed.
+                        <p>At Smart-Care, we are pioneering a new era in healthcare by harnessing the transformative power of artificial intelligence. Our AI assistant, LeBot-James1.01, is designed to work hand-in-hand with medical professionals and patients, making quality health more accessible, efficient, and personalized than ever before. LeBot-James1.01 is capable of analyzing vast amounts of medical data, recognizing patterns, and providing intelligent recommendations to assist both doctors and patients in making better-informed decisions. From supporting early detection and diagnosis, to optimizing treatment plans and predicting potential health risks, our AI empowers healthcare providers to deliver care that is proactive rather than reactive.
                         </p>
+                        
                         <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nec risus feugiat lectus risus sed ullamcorper.
-                            Auctor semper fermentum volutpat integer vel. In rhoncus elementum nunc, malesuada mi sed.
-                        </p>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nec risus feugiat lectus risus sed ullamcorper.
-                        </p>
+Moreover, Smart-Care’s AI-driven platform enables seamless virtual consultations, automated appointment scheduling, and real-time monitoring of patient health metrics, reducing administrative burdens and freeing up more time for meaningful patient interaction. By continuously learning from new data, LeBot-James1.01 evolves alongside the medical community, offering up-to-date insights and adapting to the unique needs of every user. With Smart-Care, we envision a future where cutting-edge technology bridges gaps in healthcare delivery, fosters collaboration, and ensures that high-quality care is not just a privilege, but a universal right. Welcome to the future of quality health—where innovation and compassion meet, powered by LeBot-James1.01.                        </p>
                         <Link to="/about" className="learn-more">Learn More →</Link>
                     </div>
                     <div className="image-block">

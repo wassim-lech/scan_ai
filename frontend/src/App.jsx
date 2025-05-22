@@ -14,6 +14,7 @@ import AdminDashboard from './components/AdminDashboard';
 import DatabaseManager from './components/DatabaseManager';
 import DoctorDashboard from './components/DoctorDashboard';
 import AppointmentForm from './components/AppointmentForm';
+import About from './components/About';
 import SingleStepAppointmentPage from './components/SingleStepAppointmentPage';
 import AppointmentSuccessPage from './components/AppointmentSuccessPage';
 import HelpPage from './components/HelpPage';
@@ -81,7 +82,7 @@ function App() {
               <Route path="/auth" element={<CleanLayout><AuthPage /></CleanLayout>} />
               <Route path="/help" element={<StandardLayout><HelpPage /></StandardLayout>} />
               <Route path="/subscription" element={<StandardLayout><SubscriptionPlans /></StandardLayout>} />
-              
+              <Route path="/about" element={<StandardLayout><About /></StandardLayout>} />
               {/* Protected routes with standard header */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/profile" element={<StandardLayout><UserProfile /></StandardLayout>} />

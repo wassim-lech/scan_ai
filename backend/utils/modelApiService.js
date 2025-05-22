@@ -18,7 +18,27 @@ const CLEANUP_INTERVAL = 12 * 60 * 60 * 1000; // 12 hours in ms
 async function checkModelApiHealth() {
   try {
     const response = await axios.get(`${MODEL_API_BASE_URL}/health`);
-    return response.data.model === 'loaded';
+    const isLoaded = response.data.model === 'loaded';
+    
+    // Log health check details
+    console.log('Model API Health Check:');
+    console.log(`- Status: ${response.data.status}`);
+    console.log(`- Model: ${response.data.model}`);
+    
+    if (response.data.model_file_exists !== undefined) {
+      console.log(`- Model file exists: ${response.data.model_file_exists}`);
+      console.log(`- Model file path: ${response.data.model_path}`);
+      console.log(`- Model file size: ${response.data.model_file_size_mb} MB`);
+    }
+    
+    if (!isLoaded) {
+      console.error('Model API is available but model is not loaded!');
+      if (response.data.model_file_exists === false) {
+        console.error(`Model file does not exist at: ${response.data.model_path}`);
+      }
+    }
+    
+    return isLoaded;
   } catch (error) {
     console.error('Error checking model API health:', error.message);
     return false;

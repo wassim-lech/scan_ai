@@ -9,16 +9,21 @@ const Appointment = require('../models/appointment');
 // Create an appointment (for users)
 router.post('/', auth, async (req, res) => {
     try {
-      const { doctor, date, time } = req.body;
+      const { doctor, doctorId, date, time, reason, doctorEmail, doctorSpecialty } = req.body;
       const appointment = new Appointment({
         userId: req.user.id,
         doctor,
+        doctorId,
         date,
         time,
+        reason,
+        doctorEmail,
+        doctorSpecialty
       });
       await appointment.save();
       res.status(201).json({ msg: 'Appointment created', appointment });
     } catch (err) {
+      console.error('Error creating appointment:', err);
       res.status(500).json({ msg: 'Server error' });
     }
   });
@@ -140,3 +145,41 @@ router.get('/doctor/scan-results', [auth, roleCheck(['doctor'])], async (req, re
 });
 
   module.exports = router;
+  
+// All appointments (admin only)
+router.get('/all', [auth, roleCheck(['admin'])], async (req, res) => {
+  try {
+    const appointments = await Appointment.find()
+      .populate('userId', 'username first_name last_name email')
+      .sort({ date: -1 });
+    res.json(appointments);
+  } catch (err) {
+    console.error('Error fetching all appointments:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// Update appointment status (admin only)
+router.put('/status/:id', [auth, roleCheck(['admin'])], async (req, res) => {
+  try {
+    const { status } = req.body;
+    
+    if (!['pending', 'confirmed', 'cancelled', 'completed'].includes(status)) {
+      return res.status(400).json({ msg: 'Invalid status value' });
+    }
+    
+    const appointment = await Appointment.findById(req.params.id);
+    
+    if (!appointment) {
+      return res.status(404).json({ msg: 'Appointment not found' });
+    }
+    
+    appointment.status = status;
+    await appointment.save();
+    
+    res.json({ msg: 'Appointment status updated', appointment });
+  } catch (err) {
+    console.error('Error updating appointment status:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});

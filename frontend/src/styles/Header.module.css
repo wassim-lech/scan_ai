@@ -89,16 +89,81 @@
   background: #0056b3;
 }
 
-.settingsIcon {
-  font-size: 1.5rem;
-  cursor: pointer;
-  margin-left: 0.625rem; /* ~10px */
-  color: #1e57b8;
-  transition: color 0.3s;
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-.settingsIcon:hover {
-  color: #007bff;
+.username {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.goldText {
+  color: #E6C200;
+}
+
+.blueText {
+  color: #1e57b8;
+}
+
+.greenText {
+  color: #1B8A59;
+}
+
+.purpleText {
+  color: #5E21C5;
+}
+
+.profileIcon {
+  cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.profileIcon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.profileIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.defaultAvatar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: white;
+  background-color: #6c757d;
+  border: 2px solid;
+}
+
+.goldBorder {
+  border-color: #E6C200;
+}
+
+.blueBorder {
+  border-color: #1e57b8;
+}
+
+.greenBorder {
+  border-color: #1B8A59;
+}
+
+.purpleBorder {
+  border-color: #5E21C5;
 }
 
 .welcomeText {

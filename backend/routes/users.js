@@ -63,4 +63,30 @@ router.get('/profile', auth, async (req, res) => {
   }
 });
 
+// Get all doctors
+router.get('/doctors', async (req, res) => {
+  try {
+    const doctors = await User.find({ role: 'doctor' }).select('username first_name last_name email specialty');
+    res.json(doctors);
+  } catch (err) {
+    console.error('Error fetching doctors:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// Get doctors by specialty
+router.get('/doctors/specialty/:specialty', async (req, res) => {
+  try {
+    const { specialty } = req.params;
+    const doctors = await User.find({ 
+      role: 'doctor', 
+      specialty: new RegExp(specialty, 'i') 
+    }).select('username first_name last_name email specialty');
+    res.json(doctors);
+  } catch (err) {
+    console.error(`Error fetching doctors by specialty ${req.params.specialty}:`, err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
 module.exports = router;

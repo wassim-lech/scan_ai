@@ -2,16 +2,18 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Crown } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
+import { useAuth } from '../context/AuthContext';
 import '../styles/PremiumSuccess.css';
 
 const PremiumSuccessPage = () => {
   const navigate = useNavigate();
   const { subscriptionStatus } = useSubscription();
-  const firstName = localStorage.getItem('firstName') || 'User';
+  const { user } = useAuth();
+  const firstName = localStorage.getItem('firstName') || user?.first_name || user?.username || 'User';
   
   useEffect(() => {
     // Check if user actually has premium, if not redirect to subscription page
-    if (subscriptionStatus !== 'premium') {
+    if (subscriptionStatus !== 'premium' && user?.role !== 'premium') {
       navigate('/subscription');
       return;
     }
@@ -22,7 +24,7 @@ const PremiumSuccessPage = () => {
     }, 8000);
     
     return () => clearTimeout(timer);
-  }, [navigate, subscriptionStatus]);
+  }, [navigate, subscriptionStatus, user]);
   
   return (
     <div className="premium-success-container">
